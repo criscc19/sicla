@@ -270,3 +270,4 @@ JOIN llx_societe_remise_except sr ON f.rowid=sr.fk_facture_source
 JOIN llx_facture ff ON sr.fk_facture=ff.rowid
 WHERE f.type=2
  ORDER BY f.rowid DESC
+ 
