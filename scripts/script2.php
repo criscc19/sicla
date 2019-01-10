@@ -262,3 +262,11 @@ $listofcurrenciesbefore=array('USD','GBP','AUD','MXN');
 ALTER TABLE llx_expensereport_det
 ADD `fk_soc` INT(11) NULL
 // Loop on each lines
+
+
+//consulta para pasar vendedor de facturas
+SELECT f.rowid,f.facnumber,f.total_ttc,f.fk_comercial1,f.fk_comercial2,f.fk_comercial3,sr.fk_facture,ff.facnumber,ff.total_ttc,ff.fk_comercial1,ff.fk_comercial2,ff.fk_comercial3 FROM llx_facture f
+JOIN llx_societe_remise_except sr ON f.rowid=sr.fk_facture_source
+JOIN llx_facture ff ON sr.fk_facture=ff.rowid
+WHERE f.type=2
+ ORDER BY f.rowid DESC
