@@ -277,4 +277,6 @@ JOIN llx_societe_remise_except sr ON f.rowid=sr.fk_facture_source
 JOIN llx_facture ff ON sr.fk_facture=ff.rowid
 SET ff.fk_comercial1=f.fk_comercial1, ff.fk_comercial2=f.fk_comercial2,ff.fk_comercial3=f.fk_comercial3,ff.encomienda=f.encomienda
 WHERE f.type=2
- 
+
+//agregar cliente al los gastos 
+ALTER TABLE llx_expensereport_det ADD fk_soc INT(11) NOT NULL 
