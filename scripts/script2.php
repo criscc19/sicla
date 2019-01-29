@@ -280,3 +280,10 @@ WHERE f.type=2
 
 //agregar cliente al los gastos 
 ALTER TABLE llx_expensereport_det ADD fk_soc INT(11) NOT NULL 
+
+//agregar cliente al los gastos 
+ALTER TABLE llx_societe 
+ADD `provincia` int(2) NOT NULL,
+ADD  `canton` int(2) NOT NULL,
+ADD  `distrito` int(2) NOT NULL,
+ADD  `barrio` int(2) NOT NULL
