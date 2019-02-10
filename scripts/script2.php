@@ -287,3 +287,13 @@ ADD `provincia` int(2) NOT NULL,
 ADD  `canton` int(2) NOT NULL,
 ADD  `distrito` int(2) NOT NULL,
 ADD  `barrio` int(2) NOT NULL
+
+
+//ACTUALIZAR FECHA DE CANCELACION DE FACTURAS
+UPDATE llx_facture_extrafields e
+JOIN llx_facture f ON e.fk_object=f.rowid
+LEFT JOIN (SELECT pf.fk_facture, MAX(datep) datep FROM llx_paiement_facture pf JOIN llx_paiement p ON pf.fk_paiement=p.rowid  GROUP BY pf.fk_facture) fe ON fe.fk_facture=f.rowid
+LEFT JOIN (SELECT rs.fk_facture,MAX(rs.datec) datec FROM llx_societe_remise_except rs GROUP BY rs.fk_facture) fen ON fen.fk_facture=f.rowid
+SET e.cancelacion = IF(fe.datep IS NOT NULL AND fe.datep > fen.datec OR fen.datec IS
+NULL, fe.datep, fen.datec)
+WHERE fk_statut > 0 AND paye=1
