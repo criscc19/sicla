@@ -297,3 +297,10 @@ LEFT JOIN (SELECT rs.fk_facture,MAX(rs.datec) datec FROM llx_societe_remise_exce
 SET e.cancelacion = IF(fe.datep IS NOT NULL AND fe.datep > fen.datec OR fen.datec IS
 NULL, fe.datep, fen.datec)
 WHERE fk_statut > 0 AND paye=1
+
+
+//agrear campos dolares
+ALTER TABLE `llx_payment_expensereport`
+ADD `multicurrency_code` varchar(255) DEFAULT NULL,
+ADD  `multicurrency_tx` double(24,8) DEFAULT '1.00000000',
+ADD  `multicurrency_amount` double(24,8) DEFAULT '0.00000000'
