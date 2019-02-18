@@ -304,3 +304,5 @@ ALTER TABLE `llx_payment_expensereport`
 ADD `multicurrency_code` varchar(255) DEFAULT NULL,
 ADD  `multicurrency_tx` double(24,8) DEFAULT '1.00000000',
 ADD  `multicurrency_amount` double(24,8) DEFAULT '0.00000000'
+
+https://bncrappsmobappprod.azurewebsites.net/api/ConsultaTipoCambios?pCanal=IBP
