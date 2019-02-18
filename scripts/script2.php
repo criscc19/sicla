@@ -305,4 +305,11 @@ ADD `multicurrency_code` varchar(255) DEFAULT NULL,
 ADD  `multicurrency_tx` double(24,8) DEFAULT '1.00000000',
 ADD  `multicurrency_amount` double(24,8) DEFAULT '0.00000000'
 
+//BANCO NACIONAL
 https://bncrappsmobappprod.azurewebsites.net/api/ConsultaTipoCambios?pCanal=IBP
+
+//bcr
+https://www.bancobcr.com/js/tipoCambio/BUS/actual_formato.asp?i=ES
+
+//genberal
+http://indicadoreseconomicos.bccr.fi.cr/IndicadoresEconomicos/Cuadros/frmConsultaTCVentanilla.aspx
