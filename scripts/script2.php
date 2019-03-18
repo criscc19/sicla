@@ -313,3 +313,6 @@ https://www.bancobcr.com/js/tipoCambio/BUS/actual_formato.asp?i=ES
 
 //genberal
 http://indicadoreseconomicos.bccr.fi.cr/IndicadoresEconomicos/Cuadros/frmConsultaTCVentanilla.aspx
+
+//comprobar si existe objeto
+$existe = Cotizaciones::isExistingObject('product', '', $ref, '');
