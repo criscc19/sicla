@@ -316,3 +316,10 @@ http://indicadoreseconomicos.bccr.fi.cr/IndicadoresEconomicos/Cuadros/frmConsult
 
 //comprobar si existe objeto
 $existe = Cotizaciones::isExistingObject('product', '', $ref, '');
+
+//forma juridica
+INSERT INTO `llx_c_forme_juridique` (`rowid`, `code`, `fk_pays`, `libelle`, `isvatexempted`, `active`, `module`, `position`) VALUES
+(238, 5061, 75, 'Persona Jurídica', 0, 1, NULL, 0),
+(239, 5062, 75, 'Persona Física', 0, 1, NULL, 0),
+(240, 5063, 75, 'DIMEX', 0, 1, NULL, 0),
+(241, 5064, 75, 'NITE', 0, 1, NULL, 0);
