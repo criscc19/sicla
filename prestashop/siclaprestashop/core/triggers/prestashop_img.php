@@ -2,16 +2,6 @@
 set_time_limit(-1);
 ini_set('memory_limit', '-1');
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
-
 $action = GETPOST('action');
 $prove = GETPOST('prove');
 	$arrayofcss=array(
@@ -110,13 +100,13 @@ echo $k.':'.$v['category_name_1'].'<br>';
 //var_dump($xml['product'][0]);
 
 
-$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemPrintingFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a');
+$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemDataFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a&ldl=esp');
 //$xml = simplexml_load_string($xmlDoc, "SimpleXMLElement", LIBXML_NOCDATA);
 $json = json_encode($xmlDoc);
-$xml = json_decode($json,TRUE);
-
+$xml = json_decode($json,TRUE);	
+	
 //BLOQUE MOSTRAR TODO//
- $e = 0;
+/*  $e = 0;
 foreach($xml['product'] as $k=>$v){
 print '<tr><td>'.$e++.'</br>';	
 foreach($v as $kk=>$vv){
@@ -149,7 +139,7 @@ break;exit;
 
 print '</table>';  
 exit;
-
+ */
 /*FIN BLOQUE MOSTRAR TODO*/
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
@@ -166,7 +156,6 @@ if($prove == 'makito'){
 print '<a class="button" href="'.$_SERVER['PHP_SELF'].'?action=productos&prove=makito">Importar productos de Makito</a><br><br><br>';	
 print '<a class="button" href="'.$_SERVER['PHP_SELF'].'?action=categorias&prove=makito">Importar Categorias de Makito</a><br><br><br>';
 print '<a class="button" href="'.$_SERVER['PHP_SELF'].'?action=variantes&prove=makito">Importar Variantes de Makito</a><br><br><br>';
-print '<a class="button" href="'.$_SERVER['PHP_SELF'].'?action=stock&prove=makito">Carga inicial de stock</a><br><br><br>';
 }
 
 
@@ -177,36 +166,41 @@ $json = json_encode($xmlDoc);
 $xml = json_decode($json,TRUE);	
 $e = 1;
 //BOLOQUE PRODUCTOS
+print '<table border="1" id="dtabla">';
+print '<thead>';
+print '<tr>';
+print '<th>NUM</th>';
+print '<th>REF</th>';
+print '<th>LABEL</th>';
+print '<th>DESCRIPCION</th>';
+print '<th>LINK30</th>';
+print '</tr>';
+print '</thead>';
+print '<tbody>';
+foreach($xml['product'] as $k=>$v){
 
-foreach($xml['product'] as $k=>$v){	
-
-$prod = new Product($db);
-$prod->ref = $v['ref'];
-$prod->label = $v['type'].' - '.$v['name'];
-$prod->description = $v['extendedinfo'];
-$prod->type = 0;
-$prod->fk_default_warehouse = 1;
-$prod->url = $v['link360'];
-if(!is_array($v['item_long']))$prod->width = $v['item_long'];
-if(!is_array($v['item_hight']))$prod->height = $v['item_hight'];
-if(!is_array($v['item_weight']))$prod->weight = $v['item_weight'];
-$prod->status = 1;
-$prod->status_buy = 1;
-$prod->default_vat_code = 'HT';
-$id = $prod->create($user);
-
-$cat = new categorie($db);
-$cat->fetch('',trim($v['categories']['category_name_1']));
-$prodc = new Product($db);
-$prodc->fetch($id);
-$cat->add_type($prodc,'product');
-
-/* if($e==10){
+print '<tr>';
+print '<td>'.$e++.'</td>';
+print '<td>'.$v['ref'].'</td>';
+print '<td>'.$v['type'].' - '.$v['name'].'</td>';
+print '<td>'.$v['extendedinfo'].'</td>';
+print '<td>'.$v['link360'].'</td>';
+print '</tr>';
+if($e==50){
 break;exit;	
-}  */
- $e++;
+} 
+ 
 }
-
+print '</tbody>';
+print '<tfoot>';
+print '<tr>';
+print '<th></th>';
+print '<th></th>';
+print '<th></th>';
+print '<th></th>';
+print '</tr>';
+print '</tfoot>';
+print '</table>'; 
 //FIN BOLOQUE PRODUCTOS
 }
 
@@ -224,15 +218,19 @@ $cat = array();
 foreach($xml['product'] as $kk=>$vv){
 $cat[$vv['categories']['category_ref_1']] = $vv['categories']['category_name_1'];
 }
+//aqui comienza las categorias
 
+print '<b>Total de categorias:</b> '.count($cat).'<br>';
+print '<table border="1">';
+print '<tr>';
+print '<td>NUM</td>';
+print '<td>CATEGORIA</td>';
+print '</tr>';
 foreach($cat as $ca){
-$cattegoria = new Categorie($db);	
-	$cattegoria->label			= $ca;
-	$cattegoria->description	= 'Generada por Makito';
-	$cattegoria->visible		= 1;
-	$cattegoria->type			= 'product';
-    $cattegoria->fk_parent = 1;
-	$result = $cattegoria->create($user);
+print '<td>'.$a++.'</td>';
+print '<td>'.$ca.'</td>';
+
+print '</tr>';
 }
 //fin las categorias
 
@@ -263,40 +261,58 @@ $variantes[$ref[0]][]= array('ref'=>$v['matnr'],'codigo'=>$v['colour'],'atributo
 
 }
 
-$e=0;
-print '<table border="1">';
-foreach($variantes as $k1=>$v1){
+$e = 1;
+$p = 1;
 
+foreach($variantes as $k1=>$v1 ){
 
-
-foreach($variantes[$k1] as $k2=>$v2){
+foreach($v1 as $k2=>$v2 ){
+//bolque crear directorios	 variantes
+if (!file_exists('img2/'.$p.'')) {
+    mkdir('img2/'.$p.'', 0777, true);
+}	
 	
-	
-//bolque subir imagenes
+//bolque subir imagenes variantes
 $ima = explode('/',$v2['imagen']);
 $ima_arr = explode('.',$ima[5]);
 $ima_nom = $ima_arr[0];
 $ima_ext = $ima_arr[1];
 $url = $v2['imagen'];
-$img = 'img/'.$v2['ref'].'/'.$ima[5];
-$img2 = 'img/'.$k1.'/'.$ima[5];
+$img = 'img2/'.$p.'/'.$p.'.'.$ima_ext;
+file_put_contents($img, file_get_contents($url));
+$re1 = resize_image($img,'img2/'.$p.'/'.$p.'-cart_default.'.$ima_ext,125,125,100);
+$re2 = resize_image($img,'img2/'.$p.'/'.$p.'-home_default.'.$ima_ext,250,250,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-large_default.'.$ima_ext,800,800,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-medium_default.'.$ima_ext,452,452,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-small_default.'.$ima_ext,98,98,100);
+$sq = '
+INSERT INTO `llx__prestashop_img`
+(`padre`, `hijo`, `id_img`, `valor`, `codigo`)
+ VALUES ("'.$k1.'","'.$v2['ref'].'","'.$p.'","'.$v2['atributo'].'","'.$v2['atributo'].'")';
+$db->query($sq);
 
-//imagenes padre
-/* file_put_contents($img2, file_get_contents($url));
-$re1 = resize_image($img2,'img/'.$k1.'/thumbs/'.$ima_nom.'_mini.'.$ima_ext,100,110,80);
-$re2 = resize_image($img2,'img/'.$k1.'/thumbs/'.$ima_nom.'_small.'.$ima_ext,100,120,80); */
-//fin imagenes padre
+echo $k1.':'.$k2.':'.$v2['ref'].'<br>';
 
-
-//fin bolque subir imagenes
-
-//bolque crear directorios	 variantes
-/* if (!file_exists('img/'.$v2['ref'].'')) {
-    mkdir('img/'.$v2['ref'].'', 0777, true);
 }
-if (!file_exists('img/'.$v2['ref'].'/thumbs')) {
-    mkdir('img/'.$v2['ref'].'/thumbs', 0777, true);
+echo '<hr>';
+/* if($e==2){
+break;exit;	
 } */
+$e++;
+$p++;
+}
+
+/* foreach($variantes as $k1=>$v1){
+
+foreach($variantes[$k1] as $k2=>$v2){
+$p++;
+$e++;
+//bolque crear directorios	 variantes
+if (!file_exists('img2/'.$p.'')) {
+    mkdir('img2/'.$p.'', 0777, true);
+}
+
+
 //fin bolque crear directorios	 variantes
 
 //bolque subir imagenes variantes
@@ -305,23 +321,34 @@ $ima_arr = explode('.',$ima[5]);
 $ima_nom = $ima_arr[0];
 $ima_ext = $ima_arr[1];
 $url = $v2['imagen'];
-$img = 'img/'.$v2['ref'].'/'.$ima[5];
-/* file_put_contents($img, file_get_contents($url));
-$re1 = resize_image($img,'img/'.$v2['ref'].'/thumbs/'.$ima_nom.'_mini.'.$ima_ext,100,110,80);
-$re2 = resize_image($img,'img/'.$v2['ref'].'/thumbs/'.$ima_nom.'_small.'.$ima_ext,100,120,80); */
+$img = 'img2/'.$p.'.'.$ima_ext;
+file_put_contents($img, file_get_contents($url));
+
+$re1 = resize_image($img,'img2/'.$p.'/'.$p.'-cart_default.'.$ima_ext,125,125,100);
+$re2 = resize_image($img,'img2/'.$p.'/'.$p.'-home_default.'.$ima_ext,250,250,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-large_default.'.$ima_ext,800,800,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-medium_default.'.$ima_ext,452,452,100);
+$re3 = resize_image($img,'img2/'.$p.'/'.$p.'-small_default.'.$ima_ext,98,98,100);
 //finbolque subir imagenes variantes
 $ima = explode('/',$v2['imagen']);
 $ima_arr = explode('.',$ima[5]);
 $ima_nom = $ima_arr[0];
 $ima_ext = $ima_arr[1];
-
+print '<tr>';
+print '<td>'.$v2['ref'].'</td>';
+print '<td>'.$v2['codigo'].'</td>';
+print '<td>'.$v2['atributo'].'</td>';
+//print '<td><img src="'.$v2['imagen'].'" width="50px" height="50px"></td>';
+print '<td><img src="img2/'.$p.'.'.$ima_ext.'" width="50px" height="50px"></td>';
+print '<td>'.$v2['talla'].'</td>';
+print '</tr>';	
 }	
-/* if($e==1){
+if($e==2){
 break;exit;	
-}  */
-$e++;
-}
+} 
 
+} */
+print '</table>';
 
 llxFooter();
 
@@ -335,7 +362,7 @@ exit;
 
 //fin las categorias
 
-
+//*******BLOQUE DE CATEGORIAS ****///
 }
 
 //*******REDIMENCIONAR IMAGEN****///
@@ -365,194 +392,6 @@ function resize_image($file,$target,$w, $h,$imgQuality,$crop=FALSE) {
     imagejpeg($dst,$target, $imgQuality);
     return $dst;
 }
-
-
-
-
-
-
-
-
-if($action == 'stock' && $prove="makito"){
-$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/allstockgroupedfile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a');
-//$xml = simplexml_load_string($xmlDoc, "SimpleXMLElement", LIBXML_NOCDATA);
-$json = json_encode($xmlDoc);
-$xml = json_decode($json,TRUE);
-$e = 0;
-//var_dump($xml['product'][0]['infostocks']['infostock']);exit;
-foreach($xml['product'] as $k=>$v){
-	$e++;
-	$prod = new product($db);
-	$prod->fetch('',trim($v['ref']));
-	$stock = $v['infostocks']['infostock']['stock'];
-//sumando stock
-$prod->correct_stock(
-$user,
-1,//bodega
-$stock,//cantidad
-0,//modo
-'Carga inicial desde makito',
-'',
-'Inventario carga inicial'
-);
-
-/* if($e==10){
-break;exit;	
-}  */
-
-}
-}
-
-
-
-if($action == 'precios' && $prove="makito"){
-$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/PriceListFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a');
-$json = json_encode($xmlDoc);
-$xml = json_decode($json,TRUE);
-
-foreach($xml['product'] as $k=>$v){
-$price_base_type = 'HT';
-$vat_tx = '0';
-$localtaxes_array = '';	
-$npr = 0;
-$psq = 0;
-
-$precio1 = $v['price1'] * 45/100;
-$precio2 = $v['price1'] + $precio1;
-$precio3 = $precio2 * 95/100;
-$precio4 = $precio2 + $precio3;
-$prod = new Product($db);
-$prod->fetch('',trim($v['ref']));
-
-$precio11 = $v['price1'] * 45/100;
-$precio22 = $v['price1'] + $precio11;
-$precio33 = $precio22 * 95/100;
-$precio44 = $precio22 + $precio33;
-
-
-$prod->updatePrice($precio4, $price_base_type, $user, $vat_tx, $precio4, 1, $npr, $psq, 0, $localtaxes_array, $prod->default_vat_code);
-$prod->updatePrice($precio44, $price_base_type, $user, $vat_tx, $precio44, 2, $npr, $psq, 0, $localtaxes_array, $prod->default_vat_code);
-
-}
-}
-
-
-
-
-if($action == 'colores' && $prove="makito"){
-$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemDataFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a&ldl=esp');
-//$xml = simplexml_load_string($xmlDoc, "SimpleXMLElement", LIBXML_NOCDATA);
-$json = json_encode($xmlDoc);
-$xml = json_decode($json,TRUE);	
-//*******BLOQUE DE CATEGORIAS ****///
-//var_dump($xml['product'][0]['variants']);exit;
-$cont = count($xml['product']);
-$colores = array();
-$variates = array();
-
-for ($i = 0; $i <= $cont; $i++) {
-if(isset($xml['product'][$i]['variants'])){
-foreach($xml['product'][$i]['variants']['variant'] as $k=>$v){
-if(isset($v['colour']) && !is_array($v['colour'])){
-	
-$ref = explode($v['colour'],$v['refct']);	
-$variantes[$ref[0]][]= array('ref'=>$v['matnr'],'codigo'=>$v['colour'],'atributo'=>$v['colourname'],'talla'=>$v['size'],'imagen'=>$v['image500px']);
-$llave = str_replace (' ', '',$v['colour']);
-$colores[$llave] = array('color'=>$v['colourname'],'codigo'=>$llave);
-} 	
-}	
-}
-
-}
-
-//creacion de valores de atributos
-foreach($colores as $k=>$v){
-	if(!is_array($v['color'])){
-$objectval = new ProductAttributeValue($db);
-
-		$objectval->fk_product_attribute = 1;
-		$objectval->ref = $v['codigo'];
-		$objectval->value = $v['color'];	
-$objectval->create($user);
-}		
-//echo $v['codigo'].':'.$v['color'].'<br>';
-}
-
-
-
-
-
-$e=0;
-print '<table border="1">';
-foreach($variantes as $k1=>$v1){
-
-
-
-foreach($variantes[$k1] as $k2=>$v2){
-$padre = new Product($db);
-$padre->fetch('',trim($k1));
-//creando productos variantes
-$prod = new Product($db);
-$prod->ref = $v2['ref'];
-$prod->label = $padre->label.'('.$v2['atributo'].')';
-$prod->description = $padre->description;
-$prod->type = 0;
-$prod->fk_default_warehouse = 1;
-$prod->url = $padre->url;
-$prod->width = $padre->width;
-$prod->height = $padre->height;
-$prod->weight = $padre->weight;
-$prod->status = 1;
-$prod->status_buy = 1;
-$prod->default_vat_code = 'HT';
-$id = $prod->create($user);
-
-$sq1 = $db->query('SELECT fk_categorie  FROM llx_categorie_product cp
-JOIN llx_categorie c ON cp.fk_categorie=c.rowid
-WHERE `fk_product` = '.$padre->id.'');
-$cat_id = $db->fetch_object($sq1)->fk_categorie;
-
-//agregando producto a categorias 
-$cat = new categorie($db);
-$cat->fetch($cat_id);
-$prod = new Product($db);
-$prod->fetch($id);
-$cat->add_type($prod,'product');
-
-//actualizando precios
-$price_base_type = 'HT';
-$vat_tx = '0';
-$localtaxes_array = '';	
-$npr = 0;
-$psq = 0;
-$prod->updatePrice($padre->multiprices[1], $price_base_type, $user, $vat_tx, $padre->multiprices[1], 1, $npr, $psq, 0, $localtaxes_array, $padre->default_vat_code);
-$prod->updatePrice($padre->multiprices[2], $price_base_type, $user, $vat_tx, $padre->multiprices[2], 2, $npr, $psq, 0, $localtaxes_array, $padre->default_vat_code);
-
-//obteniedo id del valor del attributo por referencia del product atribute
-$sq1 = $db->query('SELECT rowid FROM llx_product_attribute_value WHERE ref="'.trim($v2['codigo']).'" AND fk_product_attribute=1');
-$attib_id = $db->fetch_object($sq1)->rowid;
-	
-$db->query('INSERT INTO `llx_product_attribute_combination` 
-(`fk_product_parent`, `fk_product_child`, `variation_price`, `variation_price_percentage`, `variation_weight`, `entity`) 
-VALUES ("'.$padre->id.'", "'.$id.'", "0", "0", "0", "1")');
-
-$comb_id = $db->last_insert_id('llx_product_attribute_combination');
-$db->query('INSERT INTO `llx_product_attribute_combination2val` 
-(`fk_prod_combination`, `fk_prod_attr`, `fk_prod_attr_val`) 
-VALUES ("'.$comb_id.'", "1", "'.$attib_id.'")');
-;
-
-
-}	
-/* if($e==1){
-break;exit;	
-}  */
-$e++;
-}
-
-
-}
-
 ?>
 <script>
 $(document).ready( function () {

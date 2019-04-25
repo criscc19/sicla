@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 /**
  *  Class of triggers for MyModule module
  */
-class InterfaceSiclaprestashopTriggers extends DolibarrTriggers
+class InterfaceSiclaprestashop extends DolibarrTriggers
 {
 	/**
 	 * @var DoliDB Database handler
