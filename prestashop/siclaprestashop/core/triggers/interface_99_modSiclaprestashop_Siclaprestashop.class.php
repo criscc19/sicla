@@ -60,6 +60,7 @@ class InterfaceSiclaprestashop extends DolibarrTriggers
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->picto = 'mymodule@mymodule';
+		
 	}
 
 	/**
@@ -97,12 +98,10 @@ class InterfaceSiclaprestashop extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-        if (empty($conf->mymodule->enabled)) return 0;     // Module not active, we do nothing
 
 	    // Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 
-        switch ($action) {
 
             // Users
 		    //case 'USER_CREATE':
@@ -303,11 +302,158 @@ class InterfaceSiclaprestashop extends DolibarrTriggers
 		    //case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
 			//	break;
-			default:
-		        dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		        break;
-		    }
+		if($action == 'PRODUCT_CREATE'){
+	    global $conf, $db, $mysoc;
+		require_once DOL_DOCUMENT_ROOT.'/siclaprestashop/funcion.php';		
+        if(!isset($_POST['attribute'])){
+        $prod = new Product($db);
+        $prod->fetch($object->id);       
+		$sq1 = $db->query('SELECT c.label  FROM llx_categorie_product cp
+		JOIN llx_categorie c ON cp.fk_categorie=c.rowid
+		WHERE `fk_product` = '.$prod->id.'');
+		$cat_label = $db->fetch_object($sq1)->label;
+		$id_cat = getCategorie(trim($cat_label));
 
-		return 0;
-	}
+		$data = array(
+		'price'=> $prod->multiprices[1],
+		'name'=> $prod->label,
+		'description'=>$prod->description,
+		'reference'=> $prod->ref,
+		'category_id'=> $cat_id,
+		'id_category_default'=>$cat_id,
+		'quantity'=>0
+		);
+			make_product($data); 
+		   }
+	      
+        if(isset($_POST['attribute'])){
+			 
+		//creando combianciones 
+/*         $vari = $db->query('SELECT * FROM `llx_product_attribute_value`');
+		for ($s = 1; $s <= $db->num_rows($vari); $s++) {       		
+		$variantes = $db->fetch_object($vari);
+        $data = array(
+		'id_attribute_group'=>'2',
+		'name'=>$variantes->value,
+		'color'=>'#FFF'
+		);
+        $res = make_product_options($data);
+
+		if($res >0){
+		$db->query('INSERT INTO `llx_prestashop_combination`(`sicla_id`, `presta_id`, `valor`) VALUES ("'.$variantes->rowid.'","'.$res.'","'.$variantes->value.'")');	
+		
+		}
+	
+		}  */
+		//fin de crear variantes	
+		
+		//creando combinacion producto
+/*         $bs2 = 'SELECT COUNT(pi.id) variantes,p.ref fk_parent,pi.id_img_hijo FROM llx__prestashop_img pi 
+				JOIN llx_product p ON p.ref = pi.padre
+				WHERE pi.hijo = "'.trim($object->ref).'"'; 
+		for ($p = 1; $p <= $db->num_rows($hijo); $p++) {
+        $com = $db->fetch_object($hijo);
+		$padre = fk_parent;
+		}*/
+
+		$prod = new product($db);
+		$prod->fetch($_POST['id']);
+		$features = $_SESSION['addvariant_'.$prod->id];
+		
+		
+		
+	    
+		foreach ($features as $feature) {
+		$explode = explode(':', $feature);
+		$fk_prod_attr = $explode[0];
+		$fk_prod_attr_val = $explode[1];			
+		}
+
+
+		$com = $db->query('SELECT ps.presta_id,ps.valor FROM llx_prestashop_combination ps WHERE ps.sicla_id='.$fk_prod_attr_val.'');
+		for ($s = 1; $s <= $db->num_rows($com); $s++) {
+        $bjs = $db->fetch_object($com);
+		$id_variante_val = $bjs->presta_id;
+		$prodattrval = $bjs->valor;
+		}
+		
+		$fk_parent = getProduct($prod->ref);
+		$newproduct = $prod->ref;
+		
+		if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+		$newproduct .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prod->ref;
+		} else {
+		$newproduct .= '_'.$prodattrval;
+		}
+		
+		$data = array(
+		'option_id'=>$id_variante_val,
+		'id_product'=>$fk_parent,
+		'price'=>'0',
+		'quantity'=>'0',
+		'id_default_image'=>'0',
+		'reference'=>$newproduct
+		);		
+		$res = add_combination($data);
+
+		   }		   
+
+         }	
+
+		
+		if($action == 'PRODUCT_PRICE_MODIFY' || $action == 'PRODUCT_MODIFY' || $action == 'CATEGORY_MODIFY'){
+		global $conf, $db, $mysoc;
+		require_once DOL_DOCUMENT_ROOT.'/siclaprestashop/funcion.php';
+
+        //obteniendo categorias 
+		$sq1 = $db->query('SELECT c.label,c2.label as label2  FROM llx_categorie_product cp
+		JOIN llx_categorie c ON cp.fk_categorie=c.rowid
+        JOIN llx_categorie c2 ON cp.fk_categorie=c2.rowid=0 AND c2.fk_parent=0
+		WHERE `fk_product` = '.$object->id.'');
+		for ($p = 1; $p <= $db->num_rows($sq1); $p++) {
+        $bje = $db->fetch_object($sq1);
+		$cat_label = $bje->label;
+		$bodega = $bje->label2;
+		}
+
+		//obteniendo categorias 
+		$id_cat = getCategorie(trim($cat_label));
+		
+		
+		$sq12 = $db->query('SELECT ps.reel FROM llx_product_stock ps
+		JOIN llx_entrepot e ON ps.fk_entrepot=e.rowid
+		WHERE fk_product = '.$object->id.' AND e.ref LIKE "%'.$bodega.'%"');
+
+		for ($p2 = 1; $p2 <= $db->num_rows($sq12); $p2++) {
+        $bje2 = $db->fetch_object($sq12);
+		$stock = $bje2->reel;
+		}
+		// stock segun categoria padre y bodega
+		
+ 
+		$data = array(
+		'price'=> $object->multiprices[1],
+		'name'=> $object->label,
+		'description'=>$object->description,
+		'reference'=>$object->ref,
+		'category_id'=> $id_cat,
+		'id_category_default'=>$id_cat,
+		'stock'=>$stock);
+		
+		$id = getProduct(trim($object->label));
+		$stok_id = productUpdate($id,$data);
+		set_product_quantity($stock, $id, $stok_id, 0);
+		
+		}
+		
+		if($action == 'PRODUCT_DELETE'){
+
+		}
+		
+		
+}
+
+
+	
+	
 }

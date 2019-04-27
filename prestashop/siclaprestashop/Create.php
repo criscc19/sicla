@@ -28,7 +28,7 @@
 */
 
 // Here we define constants /!\ You need to replace this parameters
-define('DEBUG', false);
+define('DEBUG', true);
 define('PS_SHOP_PATH', 'http://localhost/prestashop');
 define('PS_WS_AUTH_KEY', 'UYMRWW17167Q92NP39IK575IJJDE38F7');
 require_once('class/PSWebServiceLibrary.php');
@@ -37,9 +37,9 @@ require_once('class/PSWebServiceLibrary.php');
 try
 {
 	$webService = new PrestaShopWebservice(PS_SHOP_PATH, PS_WS_AUTH_KEY, DEBUG);
-	$opt = array('resource' => 'customers');
+	$opt = array('resource' => 'products');
 	if (isset($_GET['Create']))
-		$xml = $webService->get(array('url' => PS_SHOP_PATH.'/api/combinations?schema=blank'));
+		$xml = $webService->get(array('url' => PS_SHOP_PATH.'/api/products?schema=blank'));
 	else
 		$xml = $webService->get($opt);
 	$resources = $xml->children()->children();
@@ -62,11 +62,12 @@ if (count($_POST) > 0)
 	}
 	try
 	{
-		$opt = array('resource' => 'combinations');
+		$opt = array('resource' => 'products');
 		if ($_GET['Create'] == 'Creating')
 		{
 			$opt['postXml'] = $xml->asXML();
-			$xml = $webService->add($opt);
+			$opt['id'] 		= 17;	
+			$xml = $webService->get($opt);
 			echo "Successfully added.";
 		}
 	}

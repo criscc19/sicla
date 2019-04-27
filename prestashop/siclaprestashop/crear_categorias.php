@@ -16,36 +16,14 @@ $xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemDataFile
 //$xml = simplexml_load_string($xmlDoc, "SimpleXMLElement", LIBXML_NOCDATA);
 $json = json_encode($xmlDoc);
 $xml = json_decode($json,TRUE);	
-$e = 1;
-//BOLOQUE PRODUCTOS
+//*******BLOQUE DE CATEGORIAS ****///
 
-foreach($xml['product'] as $k=>$v){	
 
-$prod = new Product($db);
-$prod->ref = $v['ref'];
-$prod->label = $v['type'].' - '.$v['name'];
-$prod->description = $v['extendedinfo'];
-$prod->type = 0;
-$prod->fk_default_warehouse = 1;
-$prod->url = $v['link360'];
-if(!is_array($v['item_long']))$prod->width = $v['item_long'];
-if(!is_array($v['item_hight']))$prod->height = $v['item_hight'];
-if(!is_array($v['item_weight']))$prod->weight = $v['item_weight'];
-$prod->status = 1;
-$prod->status_buy = 1;
-$prod->default_vat_code = 'HT';
-$id = $prod->create($user);
-
-$cat = new categorie($db);
-$cat->fetch('',trim($v['categories']['category_name_1']));
-$prodc = new Product($db);
-$prodc->fetch($id);
-$cat->add_type($prodc,'product');
-
-/* if($e==10){
-break;exit;	
-}  */
- $e++;
+foreach($cat as $ca){
+$data=array('id_parent'=>2,'id_shop_default'=>1,'name'=>''.$ca.'','description'=>''.$ca.'','link_rewrite'=>'link_rewrite_test');
+make_categories($data);
 }
+
+
 
 ?>

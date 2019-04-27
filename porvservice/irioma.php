@@ -110,7 +110,7 @@ echo $k.':'.$v['category_name_1'].'<br>';
 //var_dump($xml['product'][0]);
 
 
-$xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemPrintingFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a');
+/* $xmlDoc = simplexml_load_file('http://print.makito.es:8080/user/xml/ItemPrintingFile.php?pszinternal=4f781ea0505b41a5562b4f5124afed0a');
 //$xml = simplexml_load_string($xmlDoc, "SimpleXMLElement", LIBXML_NOCDATA);
 $json = json_encode($xmlDoc);
 $xml = json_decode($json,TRUE);
@@ -149,7 +149,7 @@ break;exit;
 
 print '</table>';  
 exit;
-
+ */
 /*FIN BLOQUE MOSTRAR TODO*/
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
@@ -201,9 +201,9 @@ $prodc = new Product($db);
 $prodc->fetch($id);
 $cat->add_type($prodc,'product');
 
-/* if($e==10){
+ if($e==1){
 break;exit;	
-}  */
+}  
  $e++;
 }
 
@@ -396,9 +396,9 @@ $stock,//cantidad
 'Inventario carga inicial'
 );
 
-/* if($e==10){
+if($e==1){
 break;exit;	
-}  */
+} 
 
 }
 }
@@ -544,9 +544,9 @@ VALUES ("'.$comb_id.'", "1", "'.$attib_id.'")');
 
 
 }	
-/* if($e==1){
+if($e==1){
 break;exit;	
-}  */
+}  
 $e++;
 }
 
