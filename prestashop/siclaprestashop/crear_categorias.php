@@ -18,11 +18,29 @@ $json = json_encode($xmlDoc);
 $xml = json_decode($json,TRUE);	
 //*******BLOQUE DE CATEGORIAS ****///
 
+$a = 1;
+$cat = array();
+foreach($xml['product'] as $kk=>$vv){
+$cat[$vv['categories']['category_ref_1']] = $vv['categories']['category_name_1'];
+}
 
 foreach($cat as $ca){
-$data=array('id_parent'=>2,'id_shop_default'=>1,'name'=>''.$ca.'','description'=>''.$ca.'','link_rewrite'=>'link_rewrite_test');
-make_categories($data);
+$cattegoria = new Categorie($db);	
+	$cattegoria->label			= $ca;
+	$cattegoria->description	= 'Generada por Makito';
+	$cattegoria->visible		= 1;
+	$cattegoria->type			= 'product';
+    $cattegoria->fk_parent = 1;
+	$result = $cattegoria->create($user);
+	
+	$data=array('id_parent'=>2,'id_shop_default'=>1,'name'=>''.$ca.'','description'=>''.$ca.'','link_rewrite'=>'link_rewrite_test');
+    make_categories($data);
 }
+//fin las categorias
+
+//*******BLOQUE DE CATEGORIAS ****///
+
+
 
 
 
