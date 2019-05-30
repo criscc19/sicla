@@ -19,10 +19,14 @@ ALTER TABLE llx_product_attribute_combination auto_increment = 1;
 
 
 
-DELETE FROM `ps_attribute_shop`
+DELETE FROM `ps_attribute_shop`;
 ALTER TABLE `ps_attribute_shop` auto_increment = 1;
 DELETE FROM `ps_product_attribute`;
 ALTER TABLE `ps_product_attribute` auto_increment = 1;
 DELETE FROM `ps_image`;
-DELETE FROM `ps_image_lang;
-DELETE FROM `ps_image_shop;
+DELETE FROM ps_image_lang;
+DELETE FROM ps_image_shop;
+DELETE FROM ps_product_shop;
+ALTER TABLE `ps_product_shop` auto_increment = 1;
+DELETE FROM ps_product_lang;
+ALTER TABLE `ps_product_lang` auto_increment = 1;

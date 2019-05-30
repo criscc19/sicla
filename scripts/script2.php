@@ -147,6 +147,14 @@ INSERT INTO `erp_cajas2018`.`llx_product_fournisseur_price`(`rowid`, `entity`)
 SELECT `rowid`, `entity` FROM `erp_cuniverso17`.`llx_product_fournisseur_price`
 
 
+
+
+INSERT INTO ps_image_shop (id_product, id_image,id_shop,cover) 
+SELECT ps.id_product,pi.id_img_padre,'1','1' FROM llx__prestashop_img pi
+JOIN ps_product ps ON pi.padre like ps.reference
+
+
+
 consulta para un isert de una tabla a otra
 INSERT INTO llx_facture_extrafields (fk_object,vendedor) 
 SELECT rowid,fk_user_author  FROM llx_facture
