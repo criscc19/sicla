@@ -331,3 +331,6 @@ INSERT INTO `llx_c_forme_juridique` (`rowid`, `code`, `fk_pays`, `libelle`, `isv
 (239, 5062, 75, 'Persona Física', 0, 1, NULL, 0),
 (240, 5063, 75, 'DIMEX', 0, 1, NULL, 0),
 (241, 5064, 75, 'NITE', 0, 1, NULL, 0);
+
+
+?display=full&filter[id_product_attribute]=[0]&filter[id_product]=[58]
