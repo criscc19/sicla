@@ -1,5 +1,6 @@
 <?php
-require 'main.inc.php';
+ ini_set('xdebug.var_display_max_depth', 5); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024);	
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 
 
@@ -15,7 +16,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 
 	$id='mainmenu';
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
-
+	
 
 	$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
 
@@ -344,7 +345,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		}
 		else if ($showmode == 2) $classname='class="tmenu"';
 
-		$menu->add($newTabMenu[$i]['url'], $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu']?$newTabMenu[$i]['leftmenu']:''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
+		//$menu->add($newTabMenu[$i]['url'], $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu']?$newTabMenu[$i]['leftmenu']:''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
 
 	// Sort on position
@@ -353,20 +354,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 
 
 
+//array_push($menu->liste[0],'prueba');
 
 foreach ($menu->liste as $k=>$m){
 $submenu = new Menu();
 		if ($m['idsel'] == 'home')
 		{
-			
+			$s = 0;
 			$langs->load("users");
 
 			// Home - dashboard
 			$submenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("MyDashboard"), 0, 1, '', $m['idsel'], 'home', 0, '', '', '', '<i class="fa fa-bar-chart fa-fw paddingright"></i>');
+            $submenu->liste[$s]['padre']='home';$s++;
+
+
 
 			// Setup
 			$submenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $m['idsel'], 'setup', 0, '', '', '', '<i class="fa fa-wrench fa-fw paddingright"></i>');
-
+            $submenu->liste[$s]['padre']='setup';$s++;
 			if ($usemenuhider || empty($leftmenu) || $leftmenu=="setup")
 			{
 			    // Load translation files required by the page
@@ -379,6 +384,7 @@ $submenu = new Menu();
 					$warnpicto =' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 				}
 				$submenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto,1);
+           $submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;				
 				$warnpicto='';
 				if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 				{
@@ -386,77 +392,119 @@ $submenu = new Menu();
 					$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 				}
 				$submenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
+                $submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;	
 				$submenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;	
 				$submenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/delais.php?mainmenu=home",$langs->trans("MenuWarnings"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 				$submenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+				$submenu->liste[$s]['padre']='setup';$submenu->liste[$s]['main']='home';$s++;					
 			}
 
 			// System tools
 			$submenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("AdminTools"), 0, $user->admin, '', $m['idsel'], 'admintools', 0, '', '', '', '<i class="fa fa-server fa-fw paddingright"></i>');
+			$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;
 			if ($usemenuhider || empty($leftmenu) || preg_match('/^admintools/',$leftmenu))
 			{
 			    // Load translation files required by the page
                 $langs->loadLangs(array('admin', 'help'));
 
 				$submenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') $submenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') $submenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') $submenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
-				$submenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
+				$submenu->liste[$s]['padre']='admintools_info';$submenu->liste[$s]['main']='home';$s++;
+                if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') {$submenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
+				$submenu->liste[$s]['padre']='admintools_info';$submenu->liste[$s]['main']='home';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') {$submenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
+				$submenu->liste[$s]['padre']='admintools_info';$submenu->liste[$s]['main']='home';$s++;}
+                if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') {$submenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
+				$submenu->liste[$s]['padre']='admintools_info';$submenu->liste[$s]['main']='home';$s++;}
+                $submenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				//if (function_exists('xdebug_is_enabled')) $submenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
 				$submenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
-				if (function_exists('eaccelerator_info')) $submenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
+				if (function_exists('eaccelerator_info')) {$submenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;}				
 				//$submenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"),1);
 				$submenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;			
 				$submenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"),1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				$submenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('ExternalResources'), 1);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 
 				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 				{
 					$langs->load("products");
 				    $submenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+				$submenu->liste[$s]['padre']='admintools';$submenu->liste[$s]['main']='home';$s++;				
 				}
 			}
 
 			$submenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, $user->rights->user->user->lire, '', $m['idsel'], 'users', 0, '', '', '', '<i class="fa fa-users fa-fw paddingright"></i>');
+			$submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;			
 			if ($user->rights->user->user->lire)
 			{
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="users")
 				{
 					$submenu->add("", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;
 					$submenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"),2, ($user->rights->user->user->creer || $user->admin) && !(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE), '', 'home');
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;
 					$submenu->add("/user/list.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, $user->rights->user->user->lire || $user->admin);
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;
 					$submenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, $user->rights->user->user->lire || $user->admin);
-					if (! empty($conf->categorie->enabled))
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;
+                    if (! empty($conf->categorie->enabled))
 					{
 						$langs->load("categories");
 						$submenu->add("/categories/index.php?leftmenu=users&type=7", $langs->trans("UsersCategoriesShort"), 2, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+				        $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;					
 					}
 					$submenu->add("", $langs->trans("Groups"), 1, ($user->rights->user->user->lire || $user->admin) && !(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;		
 					$submenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, (($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin) && !(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;		
 					$submenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, (($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin) && !(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
-				}
+				    $submenu->liste[$s]['padre']='users';$submenu->liste[$s]['main']='home';$s++;	
+                    }
 			}
+$menu->liste[$k]['submenu']= '';
+$menu->liste[$k]['submenu'] = $submenu->liste;
 
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 	}
 
 
@@ -465,27 +513,31 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'companies')
 		{
+	     $s = 0;
 			// Societes
 			if (! empty($conf->societe->enabled))
 			{
 				$langs->load("companies");
 				$submenu->add("/societe/index.php?leftmenu=thirdparties", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire, '', $m['idsel'], 'thirdparties');
-
+				$submenu->liste[$s]['padre']='thirdparties';$s++;	   
 				if ($user->rights->societe->creer)
 				{
 					$submenu->add("/societe/card.php?action=create", $langs->trans("MenuNewThirdParty"),1);
-					if (! $conf->use_javascript_ajax) $submenu->add("/societe/card.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
+				$submenu->liste[$s]['padre']='thirdparties';$s++;						
+					if (! $conf->use_javascript_ajax) {$submenu->add("/societe/card.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
+					$submenu->liste[$s]['padre']='thirdparties';$s++;}						
 				}
 			}
 
 			$submenu->add("/societe/list.php?leftmenu=thirdparties", $langs->trans("List"),1);
-
+			$submenu->liste[$s]['padre']='thirdparties';$s++;	
 			// Prospects
 			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 			{
 				$langs->load("commercial");
 				$submenu->add("/societe/list.php?type=p&amp;leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire, '', $m['idsel'], 'prospects');
-				/* no more required, there is a filter that can do more
+				$submenu->liste[$s]['padre']='prospects';$s++;	
+                /* no more required, there is a filter that can do more
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $submenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $submenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $submenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
@@ -493,6 +545,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $submenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
 				*/
 				$submenu->add("/societe/card.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
+				$submenu->liste[$s]['padre']='prospects';$s++;					
 				//$submenu->add("/contact/list.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -501,8 +554,9 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("commercial");
 				$submenu->add("/societe/list.php?type=c&amp;leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $m['idsel'], 'customers');
-
+				$submenu->liste[$s]['padre']='customers';$s++;	
 				$submenu->add("/societe/card.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
+				$submenu->liste[$s]['padre']='customers';$s++;					
 				//$submenu->add("/contact/list.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -511,7 +565,9 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("suppliers");
 				$submenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, ($user->rights->fournisseur->lire || $user->rights->supplier_proposal->lire), '', $m['idsel'], 'suppliers');
+				$submenu->liste[$s]['padre']='suppliers';$s++;					
 				$submenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && ($user->rights->fournisseur->lire || $user->rights->supplier_proposal->lire));
+				$submenu->liste[$s]['padre']='suppliers';$s++;					
 			}
 
 			// Categories
@@ -525,23 +581,32 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 					if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $menutoshow=$langs->trans("CustomersCategoriesShort");
 					if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $menutoshow=$langs->trans("ProspectsCategoriesShort");
 					$submenu->add("/categories/index.php?leftmenu=cat&amp;type=2", $menutoshow, 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+				$submenu->liste[$s]['padre']='cat';$s++;						
 				}
 				// Categories suppliers
 				if (! empty($conf->fournisseur->enabled))
 				{
 					$submenu->add("/categories/index.php?leftmenu=catfournish&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->rights->categorie->lire);
+				$submenu->liste[$s]['padre']='catfournish';$s++;						
 				}
 			}
 
 			// Contacts
 			$submenu->add("/societe/index.php?leftmenu=thirdparties", (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses")), 0, $user->rights->societe->contact->lire, '', $m['idsel'], 'contacts');
+			$submenu->liste[$s]['padre']='thirdparties';$s++;	
 			$submenu->add("/contact/card.php?leftmenu=contacts&amp;action=create", (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress")), 1, $user->rights->societe->contact->creer);
+			$submenu->liste[$s]['padre']='contacts';$s++;	
 			$submenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
-			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $submenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
-			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $submenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
-			if (! empty($conf->fournisseur->enabled)) $submenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
-			$submenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("ContactOthers"), 2, $user->rights->societe->contact->lire);
-			//$submenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
+			$submenu->liste[$s]['padre']='contacts';$s++;	
+            if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))  {$submenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
+				$submenu->liste[$s]['padre']='contacts';$s++;}	
+		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {$submenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
+		$submenu->liste[$s]['padre']='contacts';$s++;}	
+if (! empty($conf->fournisseur->enabled))  {$submenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
+				$submenu->liste[$s]['padre']='contacts';$s++;}	
+$submenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("ContactOthers"), 2, $user->rights->societe->contact->lire);
+				$submenu->liste[$s]['padre']='contacts';$s++;	
+//$submenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 
 			// Categories
 			if (! empty($conf->categorie->enabled))
@@ -549,14 +614,18 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				$langs->load("categories");
 				// Categories Contact
 				$submenu->add("/categories/index.php?leftmenu=catcontact&amp;type=4", $langs->trans("ContactCategoriesShort"), 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+				$submenu->liste[$s]['padre']='catcontact';$s++;				
 			}
-		array_push($menu->liste[$k],['subenu'=>$submenu->liste]);	
+		
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;
 		}
 	/*
 		 * Menu COMMERCIAL
 		 */
 		if ($m['idsel'] == 'commercial')
 		{
+	$s = 0;
 			$langs->load("companies");
 
 			// Customer proposal
@@ -564,53 +633,79 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("propal");
 				$submenu->add("/comm/propal/index.php?leftmenu=propals", $langs->trans("Proposals"), 0, $user->rights->propale->lire, '', $m['idsel'], 'propals', 100);
+				$submenu->liste[$s]['padre']='propals';$s++;			
 				$submenu->add("/comm/propal/card.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
+				$submenu->liste[$s]['padre']='propals';$s++;				
 				$submenu->add("/comm/propal/list.php?leftmenu=propals", $langs->trans("List"), 1, $user->rights->propale->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=2", $langs->trans("PropalStatusSigned"), 2, $user->rights->propale->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=3", $langs->trans("PropalStatusNotSigned"), 2, $user->rights->propale->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=4", $langs->trans("PropalStatusBilled"), 2, $user->rights->propale->lire);
+				$submenu->liste[$s]['padre']='propals';$s++;				
+			if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") {$submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
+			$submenu->liste[$s]['padre']='propals';$s++;}			
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") {$submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
+				$submenu->liste[$s]['padre']='propals';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") {$submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=2", $langs->trans("PropalStatusSigned"), 2, $user->rights->propale->lire);
+				$submenu->liste[$s]['padre']='propals';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") {$submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=3", $langs->trans("PropalStatusNotSigned"), 2, $user->rights->propale->lire);
+				$submenu->liste[$s]['padre']='propals';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") {$submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=4", $langs->trans("PropalStatusBilled"), 2, $user->rights->propale->lire);
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="propals") $submenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->rights->propale->lire);
+				$submenu->liste[$s]['padre']='propals';$s++;
 				$submenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
-			}
+				$submenu->liste[$s]['padre']='propals';$s++;}	
+	}
 
             // Customers orders
             if (! empty($conf->commande->enabled))
             {
                 $langs->load("orders");
                 $submenu->add("/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0, $user->rights->commande->lire, '', $m['idsel'], 'orders', 200);
-                $submenu->add("/commande/card.php?action=create&amp;leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
-                $submenu->add("/commande/list.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders" && ! empty($conf->expedition->enabled)) $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderSentShort"), 2, $user->rights->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=3", $langs->trans("StatusOrderDelivered"), 2, $user->rights->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders';$s++;	               
+				$submenu->add("/commande/card.php?action=create&amp;leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
+   				$submenu->liste[$s]['padre']='orders';$s++;	                
+				$submenu->add("/commande/list.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
+                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") {$submenu->add("/commande/list.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
+   				$submenu->liste[$s]['padre']='orders';$s++;}	                   
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") {$submenu->add("/commande/list.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
+   				$submenu->liste[$s]['padre']='orders';$s++;}	                   
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders" && ! empty($conf->expedition->enabled)) {$submenu->add("/commande/list.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderSentShort"), 2, $user->rights->commande->lire);
+    				$submenu->liste[$s]['padre']='orders';$s++;}	                  
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") {$submenu->add("/commande/list.php?leftmenu=orders&viewstatut=3", $langs->trans("StatusOrderDelivered"), 2, $user->rights->commande->lire);
                 //if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/list.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
+   				$submenu->liste[$s]['padre']='orders';$s++;}	                  
+			   if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") {$submenu->add("/commande/list.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
                 $submenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->rights->commande->lire);
-            }
+   				$submenu->liste[$s]['padre']='orders';$s++;}	               
+			}
 
 			// Suppliers orders
             if (! empty($conf->supplier_order->enabled))
 			{
 				$langs->load("orders");
 				$submenu->add("/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire, '', $m['idsel'], 'orders_suppliers', 400);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;					
 				$submenu->add("/fourn/commande/card.php?action=create&amp;leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;					
 				$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
-
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->fournisseur->commande->lire);
-                if (($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") && empty($conf->global->SUPPLIER_ORDER_HIDE_VALIDATED)) $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=2", $langs->trans("StatusOrderApprovedShort"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=3", $langs->trans("StatusOrderOnProcessShort"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=4", $langs->trans("StatusOrderReceivedPartiallyShort"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=5", $langs->trans("StatusOrderReceivedAll"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=6,7", $langs->trans("StatusOrderCanceled"), 2, $user->rights->fournisseur->commande->lire);
-                if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=9", $langs->trans("StatusOrderRefused"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;	
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->fournisseur->commande->lire);
+   				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	              
+				if (($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") && empty($conf->global->SUPPLIER_ORDER_HIDE_VALIDATED)) {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	                
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=2", $langs->trans("StatusOrderApprovedShort"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	                
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=3", $langs->trans("StatusOrderOnProcessShort"), 2, $user->rights->fournisseur->commande->lire);
+  				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	               
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=4", $langs->trans("StatusOrderReceivedPartiallyShort"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	                
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=5", $langs->trans("StatusOrderReceivedAll"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}	                
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=6,7", $langs->trans("StatusOrderCanceled"), 2, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}                
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") {$submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=9", $langs->trans("StatusOrderRefused"), 2, $user->rights->fournisseur->commande->lire);
                 // Billed is another field. We should add instead a dedicated filter on list. if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $submenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("StatusOrderBilled"), 2, $user->rights->fournisseur->commande->lire);
-
+ 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;}
 
 				$submenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
+	 				$submenu->liste[$s]['padre']='orders_suppliers';$s++;		
 			}
 
 			// Contrat
@@ -618,13 +713,20 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("contracts");
 				$submenu->add("/contrat/index.php?leftmenu=contracts", $langs->trans("ContractsSubscriptions"), 0, $user->rights->contrat->lire, '', $m['idsel'], 'contracts', 2000);
+	 			$submenu->liste[$s]['padre']='contracts';$s++;				
 				$submenu->add("/contrat/card.php?action=create&amp;leftmenu=contracts", $langs->trans("NewContractSubscription"), 1, $user->rights->contrat->creer);
+	 			$submenu->liste[$s]['padre']='contracts';$s++;					
 				$submenu->add("/contrat/list.php?leftmenu=contracts", $langs->trans("List"), 1, $user->rights->contrat->lire);
+	 			$submenu->liste[$s]['padre']='contracts';$s++;					
 				$submenu->add("/contrat/services_list.php?leftmenu=contracts", $langs->trans("MenuServices"), 1, $user->rights->contrat->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") $submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2, $user->rights->contrat->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") $submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4", $langs->trans("MenuRunningServices"), 2, $user->rights->contrat->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") $submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->rights->contrat->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") $submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=5", $langs->trans("MenuClosedServices"), 2, $user->rights->contrat->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") {$submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2, $user->rights->contrat->lire);
+	 			$submenu->liste[$s]['padre']='contracts';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") {$submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4", $langs->trans("MenuRunningServices"), 2, $user->rights->contrat->lire);
+	 			$submenu->liste[$s]['padre']='contracts';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") {$submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->rights->contrat->lire);
+		 			$submenu->liste[$s]['padre']='contracts';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="contracts") {$submenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=5", $langs->trans("MenuClosedServices"), 2, $user->rights->contrat->lire);
+		 			$submenu->liste[$s]['padre']='contracts';$s++;}					
 			}
 
 			// Interventions
@@ -632,12 +734,18 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("interventions");
 				$submenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire, '', $m['idsel'], 'ficheinter', 2200);
+ 				$submenu->liste[$s]['padre']='ficheinter';$s++;					
 				$submenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer, '', '', '', 201);
+ 				$submenu->liste[$s]['padre']='ficheinter';$s++;					
 				$submenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->rights->ficheinter->lire, '', '', '', 202);
+	 				$submenu->liste[$s]['padre']='ficheinter';$s++;				
 				$submenu->add("/fichinter/card-red.php?leftmenu=ficheinter", $langs->trans("ModelList"), 1, $user->rights->ficheinter->lire, '', '', '', 203);
+ 				$submenu->liste[$s]['padre']='ficheinter';$s++;					
 				$submenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
+ 				$submenu->liste[$s]['padre']='ficheinter';$s++;					
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;			
 		}
 
 
@@ -646,34 +754,44 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'billing')
 		{
+	$s = 0;
 			$langs->load("companies");
 
 			// Customers invoices
 			if (! empty($conf->facture->enabled))
 			{
 				$langs->load("bills");
+				
 				$submenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),0,$user->rights->facture->lire, '', $m['idsel'], 'customers_bills');
+ 				$submenu->liste[$s]['padre']='customers_bills';$s++;					
 				$submenu->add("/compta/facture/card.php?action=create",$langs->trans("NewBill"),1,$user->rights->facture->creer);
+ 				$submenu->liste[$s]['padre']='customers_bills';$s++;					
 				$submenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("List"),1,$user->rights->facture->lire, '', $m['idsel'], 'customers_bills_list');
-
+ 				$submenu->liste[$s]['padre']='customers_bills';$s++;	
 				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills(|_draft|_notpaid|_paid|_canceled)$/', $leftmenu))
 				{
 					$submenu->add("/compta/facture/list.php?leftmenu=customers_bills_draft&amp;search_status=0",$langs->trans("BillShortStatusDraft"),2,$user->rights->facture->lire);
+ 				$submenu->liste[$s]['padre']='customers_bills_draft';$s++;						
 					$submenu->add("/compta/facture/list.php?leftmenu=customers_bills_notpaid&amp;search_status=1",$langs->trans("BillShortStatusNotPaid"),2,$user->rights->facture->lire);
+ 				$submenu->liste[$s]['padre']='customers_bills_notpaid';$s++;						
 					$submenu->add("/compta/facture/list.php?leftmenu=customers_bills_paid&amp;search_status=2",$langs->trans("BillShortStatusPaid"),2,$user->rights->facture->lire);
+ 				$submenu->liste[$s]['padre']='customers_bills_paid';$s++;						
 					$submenu->add("/compta/facture/list.php?leftmenu=customers_bills_canceled&amp;search_status=3",$langs->trans("BillShortStatusCanceled"),2,$user->rights->facture->lire);
+ 				$submenu->liste[$s]['padre']='customers_bills_canceled';$s++;					
 				}
 				$submenu->add("/compta/facture/invoicetemplate_list.php?leftmenu=customers_bills_templates",$langs->trans("ListOfTemplates"),1,$user->rights->facture->creer,'',$m['idsel'],'customers_bills_templates');    // No need to see recurring invoices, if user has no permission to create invoice.
-
+ 				$submenu->liste[$s]['padre']='customers_bills_templates';$s++;	
 				$submenu->add("/compta/paiement/list.php?leftmenu=customers_bills_payment",$langs->trans("Payments"),1,$user->rights->facture->lire,'',$m['idsel'],'customers_bills_payment');
-
+ 				$submenu->liste[$s]['padre']='customers_bills_payment';$s++;	
 				if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 				{
 					$submenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$m['idsel'],'customer_bills_tovalid');
+ 				$submenu->liste[$s]['padre']='customers_bills_tovalid';$s++;					
 				}
 				$submenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports",$langs->trans("Reportings"),2,$user->rights->facture->lire,'',$m['idsel'],'customers_bills_reports');
-
+ 				$submenu->liste[$s]['padre']='customers_bills_reports';$s++;	
 				$submenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"),1,$user->rights->facture->lire,'',$m['idsel'],'customers_bills_stats');
+ 				$submenu->liste[$s]['padre']='customers_bills_stats';$s++;				
 			}
 
 			// Suppliers invoices
@@ -681,27 +799,34 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("bills");
 				$submenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills');
+ 				$submenu->liste[$s]['padre']='suppliers_bills';$s++;					
 				$submenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer, '', $m['idsel'], 'suppliers_bills_create');
+ 				$submenu->liste[$s]['padre']='suppliers_bills';$s++;					
 				$submenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"),1,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_list');
-
+ 				$submenu->liste[$s]['padre']='suppliers_bills';$s++;	
 				if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
 					$submenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_draft&amp;search_status=0", $langs->trans("BillShortStatusDraft"),2,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_draft');
+	 				$submenu->liste[$s]['padre']='suppliers_bills_draft';$s++;					
 					$submenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_notpaid&amp;search_status=1", $langs->trans("BillShortStatusNotPaid"),2,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_notpaid');
+ 				$submenu->liste[$s]['padre']='suppliers_bills_notpaid';$s++;						
 					$submenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_paid&amp;search_status=2", $langs->trans("BillShortStatusPaid"),2,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_paid');
+ 				$submenu->liste[$s]['padre']='suppliers_bills_paid';$s++;					
 				}
 
 				$submenu->add("/fourn/facture/paiement.php?leftmenu=suppliers_bills_payment", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_payment');
-
+ 				$submenu->liste[$s]['padre']='suppliers_bills_payment';$s++;	
 				$submenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_report",$langs->trans("Reportings"),2,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_report');
-
+ 				$submenu->liste[$s]['padre']='suppliers_bills_report';$s++;	
 				$submenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire, '', $m['idsel'], 'suppliers_bills_stats');
+ 				$submenu->liste[$s]['padre']='suppliers_bills_stats';$s++;				
 			}
 
 			// Orders
 			if (! empty($conf->commande->enabled))
 			{
 				$langs->load("orders");
-				if (! empty($conf->facture->enabled)) $submenu->add("/commande/list.php?leftmenu=orders&amp;viewstatut=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $m['idsel'], 'orders');
+				if (! empty($conf->facture->enabled)) {$submenu->add("/commande/list.php?leftmenu=orders&amp;viewstatut=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $m['idsel'], 'orders');
+ 				$submenu->liste[$s]['padre']='orders';$s++;}					
 				//                  if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 			}
 
@@ -712,6 +837,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				{
 					$langs->load("supplier");
 					$submenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->rights->commande->lire, '', $m['idsel'], 'orders');
+ 				$submenu->liste[$s]['padre']='orders';$s++;						
 					//                  if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $submenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 				}
 			}
@@ -722,8 +848,11 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("donations");
 				$submenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=billing",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $m['idsel'], 'donations');
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") $submenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") $submenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
+ 				$submenu->liste[$s]['padre']='donations';$s++;					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") {$submenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+ 				$submenu->liste[$s]['padre']='donations';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") {$submenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
+ 				$submenu->liste[$s]['padre']='donations';$s++;}	
 				// if ($leftmenu=="donations") $submenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
@@ -734,44 +863,65 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 
 				$permtoshowmenu=((! empty($conf->tax->enabled) && $user->rights->tax->charges->lire) || (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) || (! empty($conf->loan->enabled) && $user->rights->loan->read) || (! empty($conf->banque->enabled) && $user->rights->banque->lire));
 				$submenu->add("/compta/charges/index.php?leftmenu=tax&amp;mainmenu=billing",$langs->trans("MenuSpecialExpenses"), 0, $permtoshowmenu, '', $m['idsel'], 'tax');
-
+ 				$submenu->liste[$s]['padre']='tax';$s++;	
 				// Social contributions
 				if (! empty($conf->tax->enabled))
 				{
 					$submenu->add("/compta/sociales/list.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $submenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $submenu->add("/compta/sociales/list.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $submenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=billing&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
+	 				$submenu->liste[$s]['padre']='tax_social';$s++;					
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) {$submenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
+					$submenu->liste[$s]['padre']='tax_social';$s++;}					
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) {$submenu->add("/compta/sociales/list.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_social';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) {$submenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=billing&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_social';$s++;}							
 					// VAT
 					if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
 					{
 						$submenu->add("/compta/tva/list.php?leftmenu=tax_vat&amp;mainmenu=billing",$langs->transcountry("VAT", $mysoc->country_code),1,$user->rights->tax->charges->lire, '', $m['idsel'], 'tax_vat');
-						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $submenu->add("/compta/tva/card.php?leftmenu=tax_vat&action=create",$langs->trans("New"),2,$user->rights->tax->charges->creer);
-						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $submenu->add("/compta/tva/list.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $submenu->add("/compta/tva/index.php?leftmenu=tax_vat",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
-						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $submenu->add("/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
-						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $submenu->add("/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_vat';$s++;						
+						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) {$submenu->add("/compta/tva/card.php?leftmenu=tax_vat&action=create",$langs->trans("New"),2,$user->rights->tax->charges->creer);
+ 				$submenu->liste[$s]['padre']='tax_vat';$s++;}								
+						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) {$submenu->add("/compta/tva/list.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_vat';$s++;}								
+						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) {$submenu->add("/compta/tva/index.php?leftmenu=tax_vat",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_vat';$s++;}								
+						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) {$submenu->add("/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_vat';$s++;}								
+						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) {$submenu->add("/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+	 				$submenu->liste[$s]['padre']='tax_vat';$s++;}							
 						global $mysoc;
 
 						//Local Taxes 1
 						if($mysoc->useLocalTax(1) && (isset($mysoc->localtax1_assuj) && $mysoc->localtax1_assuj=="1"))
 						{
 							$submenu->add("/compta/localtax/list.php?leftmenu=tax_1_vat&amp;mainmenu=billing&amp;localTaxType=1",$langs->transcountry("LT1",$mysoc->country_code),1,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) $submenu->add("/compta/localtax/card.php?leftmenu=tax_1_vat&action=create&amp;localTaxType=1",$langs->trans("New"),2,$user->rights->tax->charges->creer);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) $submenu->add("/compta/localtax/list.php?leftmenu=tax_1_vat&amp;localTaxType=1",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) $submenu->add("/compta/localtax/index.php?leftmenu=tax_1_vat&amp;localTaxType=1",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) $submenu->add("/compta/localtax/clients.php?leftmenu=tax_1_vat&amp;localTaxType=1", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) $submenu->add("/compta/localtax/quadri_detail.php?leftmenu=tax_1_vat&amp;localTaxType=1", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/card.php?leftmenu=tax_1_vat&action=create&amp;localTaxType=1",$langs->trans("New"),2,$user->rights->tax->charges->creer);
+ 				$submenu->liste[$s]['padre']='tax_1_vat';$s++;}								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/list.php?leftmenu=tax_1_vat&amp;localTaxType=1",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_1_vat';$s++;}								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/index.php?leftmenu=tax_1_vat&amp;localTaxType=1",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
+	 				$submenu->liste[$s]['padre']='tax_1_vat';$s++;}							
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/clients.php?leftmenu=tax_1_vat&amp;localTaxType=1", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_1_vat';$s++;}								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_1_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/quadri_detail.php?leftmenu=tax_1_vat&amp;localTaxType=1", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+	 				$submenu->liste[$s]['padre']='tax_1_vat';$s++;}						
 						}
 						//Local Taxes 2
 						if($mysoc->useLocalTax(2) && (isset($mysoc->localtax2_assuj) && $mysoc->localtax2_assuj=="1"))
 						{
 							$submenu->add("/compta/localtax/list.php?leftmenu=tax_2_vat&amp;mainmenu=billing&amp;localTaxType=2",$langs->transcountry("LT2",$mysoc->country_code),1,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) $submenu->add("/compta/localtax/card.php?leftmenu=tax_2_vat&action=create&amp;localTaxType=2",$langs->trans("New"),2,$user->rights->tax->charges->creer);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) $submenu->add("/compta/localtax/list.php?leftmenu=tax_2_vat&amp;localTaxType=2",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) $submenu->add("/compta/localtax/index.php?leftmenu=tax_2_vat&amp;localTaxType=2",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) $submenu->add("/compta/localtax/clients.php?leftmenu=tax_2_vat&amp;localTaxType=2", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
-							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) $submenu->add("/compta/localtax/quadri_detail.php?leftmenu=tax_2_vat&amp;localTaxType=2", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/card.php?leftmenu=tax_2_vat&action=create&amp;localTaxType=2",$langs->trans("New"),2,$user->rights->tax->charges->creer);
+ 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;}								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/list.php?leftmenu=tax_2_vat&amp;localTaxType=2",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;}								
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/index.php?leftmenu=tax_2_vat&amp;localTaxType=2",$langs->trans("ReportByMonth"),2,$user->rights->tax->charges->lire);
+	 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;}							
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/clients.php?leftmenu=tax_2_vat&amp;localTaxType=2", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;}									
+							if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_2_vat/i',$leftmenu)) {$submenu->add("/compta/localtax/quadri_detail.php?leftmenu=tax_2_vat&amp;localTaxType=2", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+ 				$submenu->liste[$s]['padre']='tax_2_vat';$s++;}							
 						}
 					}
 				}
@@ -781,9 +931,13 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				{
 					$langs->load("salaries");
 					$submenu->add("/compta/salaries/list.php?leftmenu=tax_salary&amp;mainmenu=billing",$langs->trans("Salaries"),1,$user->rights->salaries->read, '', $m['idsel'], 'tax_salary');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $submenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $submenu->add("/compta/salaries/list.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $submenu->add("/compta/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"),2,$user->rights->salaries->read);
+ 				$submenu->liste[$s]['padre']='tax_salary';$s++;						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) {$submenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->write);
+ 				$submenu->liste[$s]['padre']='tax_salary';$s++;}							
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) {$submenu->add("/compta/salaries/list.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
+ 				$submenu->liste[$s]['padre']='tax_salary';$s++;}							
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) {$submenu->add("/compta/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"),2,$user->rights->salaries->read);
+ 				$submenu->liste[$s]['padre']='tax_salary';$s++;}						
 				}
 
 				// Loan
@@ -791,7 +945,9 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				{
 					$langs->load("loan");
 					$submenu->add("/loan/list.php?leftmenu=tax_loan&amp;mainmenu=billing",$langs->trans("Loans"),1,$user->rights->loan->read, '', $m['idsel'], 'tax_loan');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_loan/i',$leftmenu)) $submenu->add("/loan/card.php?leftmenu=tax_loan&action=create",$langs->trans("NewLoan"),2,$user->rights->loan->write);
+ 				$submenu->liste[$s]['padre']='tax_loan';$s++;						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_loan/i',$leftmenu)) {$submenu->add("/loan/card.php?leftmenu=tax_loan&action=create",$langs->trans("NewLoan"),2,$user->rights->loan->write);
+ 				$submenu->liste[$s]['padre']='tax_loan';$s++;}						
 					//if (empty($leftmenu) || preg_match('/^tax_loan/i',$leftmenu)) $submenu->add("/loan/payment/list.php?leftmenu=tax_loan",$langs->trans("Payments"),2,$user->rights->loan->read);
 				}
 
@@ -800,11 +956,15 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				{
 					$langs->load("banks");
 					$submenu->add("/compta/bank/various_payment/list.php?leftmenu=tax_various&amp;mainmenu=billing",$langs->trans("MenuVariousPayment"),1,$user->rights->banque->lire, '', $m['idsel'], 'tax_various');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $submenu->add("/compta/bank/various_payment/card.php?leftmenu=tax_various&action=create",$langs->trans("New"), 2, $user->rights->banque->modifier);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $submenu->add("/compta/bank/various_payment/list.php?leftmenu=tax_various",$langs->trans("List"),2,$user->rights->banque->lire);
+ 				$submenu->liste[$s]['padre']='tax_various';$s++;						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) {$submenu->add("/compta/bank/various_payment/card.php?leftmenu=tax_various&action=create",$langs->trans("New"), 2, $user->rights->banque->modifier);
+	 				$submenu->liste[$s]['padre']='tax_various';$s++;}					
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) {$submenu->add("/compta/bank/various_payment/list.php?leftmenu=tax_various",$langs->trans("List"),2,$user->rights->banque->lire);
+ 				$submenu->liste[$s]['padre']='tax_various';$s++;}					
 				}
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 
 		/*
@@ -812,6 +972,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'accountancy')
 		{
+	     $s = 0;
 			$langs->load("companies");
 
 			// Accounting Expert
@@ -821,66 +982,88 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 
 				$permtoshowmenu=(! empty($conf->accounting->enabled) || $user->rights->accounting->bind->write || $user->rights->compta->resultat->lire);
 				$submenu->add("/accountancy/index.php?leftmenu=accountancy",$langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $m['idsel'], 'accountancy');
-
+ 				$submenu->liste[$s]['accountancy']='accountancy';$s++;
 				// Chart of account
 				$submenu->add("/accountancy/index.php?leftmenu=accountancy_admin", $langs->trans("Setup"),1,$user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin', 1);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("General"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_general', 10);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/journals_list.php?id=35&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingJournals"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_journal', 20);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/accountmodel.php?id=31&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Pcg_version"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chartmodel', 30);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chart', 40);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chart', 41);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 50);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("General"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_general', 10);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/journals_list.php?id=35&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingJournals"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_journal', 20);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/accountmodel.php?id=31&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Pcg_version"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chartmodel', 30);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chart', 40);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_chart', 41);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 50);
+	 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}				
 				if (! empty($conf->banque->enabled))
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_bank', 51);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_bank', 51);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}				
 				}
 				if (! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/admin/dict.php?id=10&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuVatAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 52);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/admin/dict.php?id=10&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuVatAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 52);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
 				}
 				if (! empty($conf->tax->enabled))
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/admin/dict.php?id=7&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuTaxAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 53);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/admin/dict.php?id=7&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuTaxAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 53);
+ 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}					
 				}
 				if (! empty($conf->expensereport->enabled))
 				{
-					if (preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/admin/dict.php?id=17&from=accountancy&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuExpenseReportAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 54);
+					if (preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/admin/dict.php?id=17&from=accountancy&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuExpenseReportAccounts"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_default', 54);
+	 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}				
 				}
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_product', 55);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_export', 60);
-
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_product', 55);
+	 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}						
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"),2, $user->rights->accounting->chartofaccount, '', $m['idsel'], 'accountancy_admin_export', 60);
+	 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}		
 				// Fiscal year
 				if ($conf->global->MAIN_FEATURES_LEVEL > 1)     // Not yet used. In a future will lock some periods.
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $submenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"), 2, $user->rights->accounting->fiscalyear, '', $m['idsel'], 'fiscalyear');
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) {$submenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"), 2, $user->rights->accounting->fiscalyear, '', $m['idsel'], 'fiscalyear');
+	 				$submenu->liste[$s]['padre']='accountancy_admin';$s++;}						
 				}
 
 				// Binding
 				if (! empty($conf->facture->enabled))
 				{
 					$submenu->add("/accountancy/customer/index.php?leftmenu=accountancy_dispatch_customer&amp;mainmenu=accountancy",$langs->trans("CustomersVentilation"),1,$user->rights->accounting->bind->write, '', $m['idsel'], 'dispatch_customer');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/',$leftmenu)) $submenu->add("/accountancy/customer/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/',$leftmenu)) $submenu->add("/accountancy/customer/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_customer';$s++;							
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/',$leftmenu)) {$submenu->add("/accountancy/customer/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_customer';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/',$leftmenu)) {$submenu->add("/accountancy/customer/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_customer';$s++;}					
 				}
 				if (! empty($conf->supplier_invoice->enabled))
 				{
 					$submenu->add("/accountancy/supplier/index.php?leftmenu=accountancy_dispatch_supplier&amp;mainmenu=accountancy",$langs->trans("SuppliersVentilation"),1,$user->rights->accounting->bind->write, '', $m['idsel'], 'dispatch_supplier');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/',$leftmenu)) $submenu->add("/accountancy/supplier/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/',$leftmenu)) $submenu->add("/accountancy/supplier/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_supplier';$s++;						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/',$leftmenu)) {$submenu->add("/accountancy/supplier/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_supplier';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/',$leftmenu)) {$submenu->add("/accountancy/supplier/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_supplier';$s++;}					
 				}
 
 				if (! empty($conf->expensereport->enabled))
 				{
 					$submenu->add("/accountancy/expensereport/index.php?leftmenu=accountancy_dispatch_expensereport&amp;mainmenu=accountancy",$langs->trans("ExpenseReportsVentilation"),1,$user->rights->accounting->bind->write, '', $m['idsel'], 'dispatch_expensereport');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/',$leftmenu)) $submenu->add("/accountancy/expensereport/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_expensereport",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/',$leftmenu)) $submenu->add("/accountancy/expensereport/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_expensereport",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_expensereport';$s++;						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/',$leftmenu)) {$submenu->add("/accountancy/expensereport/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_expensereport",$langs->trans("ToBind"),2,$user->rights->accounting->bind->write);
+	 				$submenu->liste[$s]['padre']='accountancy_dispatch_expensereport';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/',$leftmenu)) {$submenu->add("/accountancy/expensereport/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_expensereport",$langs->trans("Binded"),2,$user->rights->accounting->bind->write);
+		 				$submenu->liste[$s]['padre']='accountancy_dispatch_expensereport';$s++;}				
 				}
 
 				// Journals
 				if(! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $m['idsel'] == 'accountancy')
 				{
 					$submenu->add('',$langs->trans("Journalization"),1,$user->rights->accounting->comptarapport->lire);
-
+	 				$submenu->liste[$s]['padre']='accountancy';$s++;	
 					// Multi journal
 					$sql = "SELECT rowid, code, label, nature";
 					$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
@@ -922,6 +1105,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 									$langs->load('accountancy');
 									$journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
 									$submenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_journal';$s++;									
 								}
 								$i++;
 							}
@@ -930,6 +1114,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 						{
 							// Should not happend. Entries are added
 							$submenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+		 				$submenu->liste[$s]['padre']='accountancy';$s++;						
 						}
 					}
 					else dol_print_error($db);
@@ -938,37 +1123,48 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 
 				// General Ledger
 				$submenu->add("/accountancy/bookkeeping/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_generalledger",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
-
+	 				$submenu->liste[$s]['padre']='accountancy_generalledger';$s++;	
 				// Balance
 				$submenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_balance",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
-
+	 				$submenu->liste[$s]['padre']='accountancy_balance';$s++;	
 				// Reports
 				$langs->load("compta");
 
 				$submenu->add("/compta/resultat/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_report",$langs->trans("Reportings"),1,$user->rights->accounting->comptarapport->lire, '', $m['idsel'], 'ca');
-
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/resultat/index.php?leftmenu=accountancy_report",$langs->trans("MenuReportInOut"),2,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report",$langs->trans("ByPredefinedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/resultat/result.php?leftmenu=accountancy_report",$langs->trans("ByPersonalizedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/resultat/index.php?leftmenu=accountancy_report",$langs->trans("MenuReportInOut"),2,$user->rights->accounting->comptarapport->lire);
+				$submenu->liste[$s]['padre']='accountancy_report';$s++;}			
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report",$langs->trans("ByPredefinedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/resultat/result.php?leftmenu=accountancy_report",$langs->trans("ByPersonalizedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}
 
 				$modecompta='CREANCES-DETTES';
 				if(! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $m['idsel'] == 'accountancy') $modecompta='BOOKKEEPING';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
 				if ($modecompta)
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}					
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}					
 				}
 
 				$modecompta='RECETTES-DEPENSES';
 				//if (! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $m['idsel'] == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
 				if ($modecompta)
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnoverCollected"),2,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnoverCollected"),2,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) {$submenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+	 				$submenu->liste[$s]['padre']='accountancy_report';$s++;}						
 					//if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
 					//if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $submenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
 				}
@@ -981,15 +1177,17 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 
 				// Bilan, resultats
 				$submenu->add("/compta/resultat/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire, '', $m['idsel'], 'ca');
-
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/resultat/index.php?leftmenu=report",$langs->trans("MenuReportInOut"),1,$user->rights->compta->resultat->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/resultat/clientfourn.php?leftmenu=report",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/resultat/index.php?leftmenu=report",$langs->trans("MenuReportInOut"),1,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/resultat/clientfourn.php?leftmenu=report",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}				
 				/* On verra ca avec module compabilite expert
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->rights->compta->resultat->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->rights->compta->resultat->lire);
 				*/
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/index.php?leftmenu=report",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire);
-
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/stats/index.php?leftmenu=report",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}
 				/*
 				 if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/cumul.php?leftmenu=report","Cumule",2,$user->rights->compta->resultat->lire);
 				if (! empty($conf->propal->enabled)) {
@@ -997,15 +1195,20 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/comp.php?leftmenu=report","Transforme",2,$user->rights->compta->resultat->lire);
 				}
 				*/
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/casoc.php?leftmenu=report",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/cabyuser.php?leftmenu=report",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"),2,$user->rights->compta->resultat->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/stats/byratecountry.php?leftmenu=report", $langs->trans("ByVatRate"),2,$user->rights->compta->resultat->lire);
-
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/stats/casoc.php?leftmenu=report",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/stats/cabyuser.php?leftmenu=report",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/stats/byratecountry.php?leftmenu=report", $langs->trans("ByVatRate"),2,$user->rights->compta->resultat->lire);
+	 				$submenu->liste[$s]['padre']='report';$s++;}
 				// Journaux
 				//if ($leftmenu=="ca") $submenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/journal/sellsjournal.php?leftmenu=report",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire, '', '', '', 50);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $submenu->add("/compta/journal/purchasesjournal.php?leftmenu=report",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire, '', '', '', 51);
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/journal/sellsjournal.php?leftmenu=report",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire, '', '', '', 50);
+		 				$submenu->liste[$s]['padre']='report';$s++;}			
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) {$submenu->add("/compta/journal/purchasesjournal.php?leftmenu=report",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire, '', '', '', 51);
+	 				$submenu->liste[$s]['padre']='report';$s++;}			
 			}
 
 			// Assets
@@ -1013,13 +1216,20 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("assets");
 				$submenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $m['idsel'], 'asset');
+	 				$submenu->liste[$s]['padre']='asset';$s++;				
 				$submenu->add("/asset/card.php?action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
+	 				$submenu->liste[$s]['padre']='asset';$s++;					
 				$submenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy",$langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
+	 				$submenu->liste[$s]['padre']='asset';$s++;					
 				$submenu->add("/asset/type.php?leftmenu=asset_type",$langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $m['idsel'], 'asset_type');
-				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/',$leftmenu)) $submenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->write);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/',$leftmenu)) $submenu->add("/asset/type.php?leftmenu=asset_type",$langs->trans("MenuListTypeAssets"), 2, $user->rights->asset->read);
+	 				$submenu->liste[$s]['padre']='asset_type';$s++;					
+				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/',$leftmenu)) {$submenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->write);
+	 				$submenu->liste[$s]['padre']='asset_type';$s++;}						
+				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/',$leftmenu)) {$submenu->add("/asset/type.php?leftmenu=asset_type",$langs->trans("MenuListTypeAssets"), 2, $user->rights->asset->read);
+	 				$submenu->liste[$s]['padre']='asset_type';$s++;}					
 			}
-	array_push($menu->liste[$k],['subenu'=>$submenu->liste]);		
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 			
 		}
 
@@ -1028,6 +1238,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'bank')
 		{
+	$s = 0;
 			// Load translation files required by the page
 			$langs->loadLangs(array("withdrawals","banks","bills","categories"));
 
@@ -1035,37 +1246,46 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			if (! empty($conf->banque->enabled))
 			{
 				$submenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire, '', $m['idsel'], 'bank');
-
+	 				$submenu->liste[$s]['padre']='bank';$s++;
 				$submenu->add("/compta/bank/card.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
+	 				$submenu->liste[$s]['padre']='bank';$s++;				
 				$submenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->lire, '', $m['idsel'], 'bank');
+	 				$submenu->liste[$s]['padre']='bank';$s++;				
 				$submenu->add("/compta/bank/bankentries_list.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
+	 				$submenu->liste[$s]['padre']='bank';$s++;				
 				$submenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
-
+	 				$submenu->liste[$s]['padre']='bank';$s++;
 				$submenu->add("/compta/bank/transfer.php",$langs->trans("MenuBankInternalTransfer"),1,$user->rights->banque->transfer);
+	 				$submenu->liste[$s]['padre']='bank';$s++;			
 			}
 
 			if (! empty($conf->categorie->enabled))
 			{
 				$langs->load("categories");
 				$submenu->add("/categories/index.php?type=5",$langs->trans("Rubriques"),1,$user->rights->categorie->creer, '', $m['idsel'], 'tags');
+	 				$submenu->liste[$s]['padre']='bank';$s++;				
 				$submenu->add("/compta/bank/categ.php",$langs->trans("RubriquesTransactions"),1,$user->rights->categorie->creer, '', $m['idsel'], 'tags');
+	 				$submenu->liste[$s]['padre']='bank';$s++;			
 			}
 
 			// Prelevements
 			if (! empty($conf->prelevement->enabled))
 			{
 				$submenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire, '', $m['idsel'], 'withdraw');
-
+	 				$submenu->liste[$s]['padre']='withdraw';$s++;
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
 
-				if (empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/create.php?mainmenu=bank",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
+				if (empty($leftmenu) || $leftmenu=="withdraw")  {$submenu->add("/compta/prelevement/create.php?mainmenu=bank",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
+	 				$submenu->liste[$s]['padre']='withdraw';$s++;}
 
-
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/list.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/rejets.php?mainmenu=bank",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/stats.php?mainmenu=bank",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
-
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") {$submenu->add("/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
+				$submenu->liste[$s]['padre']='withdraw';$s++;}			
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") {$submenu->add("/compta/prelevement/list.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
+	 				$submenu->liste[$s]['padre']='withdraw';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") {$submenu->add("/compta/prelevement/rejets.php?mainmenu=bank",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
+	 				$submenu->liste[$s]['padre']='withdraw';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") {$submenu->add("/compta/prelevement/stats.php?mainmenu=bank",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
+	 				$submenu->liste[$s]['padre']='withdraw';$s++;}
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="withdraw") $submenu->add("/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
 			}
 
@@ -1073,19 +1293,27 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT) && ! empty($conf->banque->enabled) && (! empty($conf->facture->enabled) || ! empty($conf->global->MAIN_MENU_CHEQUE_DEPOSIT_ON)))
 			{
 				$submenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque, '', $m['idsel'], 'checks');
-				if (preg_match('/checks/',$leftmenu)) $submenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-				if (preg_match('/checks/',$leftmenu)) $submenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->cheque);
+	 				$submenu->liste[$s]['padre']='checks';$s++;				
+				if (preg_match('/checks/',$leftmenu)) {$submenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+	 				$submenu->liste[$s]['padre']='checks_bis';$s++;}					
+				if (preg_match('/checks/',$leftmenu)) {$submenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->cheque);
+	 				$submenu->liste[$s]['padre']='checks_bis';$s++;}					
 			}
 
 			// Cash Control
 			if (! empty($conf->takepos->enabled) || ! empty($conf->cashdesk->enabled))
 			{
 				$permtomakecashfence = ($user->rights->cashdesk->use ||$user->rights->takepos->use);
+				
 				$submenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("POS"),0,$permtomakecashfence, '', $m['idsel'], 'cashcontrol');
+	 				$submenu->liste[$s]['padre']='cashcontrol';$s++;				
 				$submenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create",$langs->trans("NewCashFence"),1,$permtomakecashfence);
+	 				$submenu->liste[$s]['padre']='cashcontrol';$s++;					
 				$submenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("List"),1,$permtomakecashfence);
+	 				$submenu->liste[$s]['padre']='cashcontrol';$s++;				
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;			
 		}
 
 		/*
@@ -1093,29 +1321,38 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'products')
 		{
+	    $s = 0;
 			// Products
 			if (! empty($conf->product->enabled))
 			{
 				$submenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->rights->produit->lire, '', $m['idsel'], 'product');
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				$submenu->add("/product/card.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->rights->produit->creer);
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				$submenu->add("/product/list.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				if (! empty($conf->stock->enabled))
 				{
 					$submenu->add("/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				}
 				if (! empty($conf->productbatch->enabled))
 				{
 					$langs->load("stocks");
 					$submenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+	 				$submenu->liste[$s]['padre']='product';$s++;					
 					$submenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				}
 				if (! empty($conf->variants->enabled))
 				{
 					$submenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->rights->produit->lire);
+	 				$submenu->liste[$s]['padre']='product';$s++;				
 				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{
 					$submenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
+	 				$submenu->liste[$s]['padre']='stats';$s++;				
 				}
 
 				// Categories
@@ -1123,6 +1360,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				{
 					$langs->load("categories");
 					$submenu->add("/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+	 				$submenu->liste[$s]['padre']='cat';$s++;					
 					//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $submenu->add("/categories/list.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
 			}
@@ -1131,17 +1369,22 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			if (! empty($conf->service->enabled))
 			{
 				$submenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->rights->service->lire, '', $m['idsel'], 'service');
+	 				$submenu->liste[$s]['padre']='service';$s++;				
 				$submenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
+	 				$submenu->liste[$s]['padre']='service';$s++;				
 				$submenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
+	 				$submenu->liste[$s]['padre']='service';$s++;					
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{
 					$submenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire && $user->rights->propale->lire);
+	 				$submenu->liste[$s]['padre']='stats';$s++;					
 				}
 				// Categories
 				if (! empty($conf->categorie->enabled))
 				{
 					$langs->load("categories");
 					$submenu->add("/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+	 				$submenu->liste[$s]['padre']='cat';$s++;					
 					//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $submenu->add("/categories/list.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
 			}
@@ -1151,12 +1394,18 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("stocks");
 				$submenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->rights->stock->lire, '', $m['idsel'], 'stock');
+	 				$submenu->liste[$s]['padre']='stock';$s++;				
 				$submenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->rights->stock->creer);
+	 				$submenu->liste[$s]['padre']='stock';$s++;						
 				$submenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+	 				$submenu->liste[$s]['padre']='stock';$s++;						
 				$submenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
-
-                $submenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->rights->stock->mouvement->creer);
-                if ($conf->supplier_order->enabled) $submenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
+	 				$submenu->liste[$s]['padre']='stock';$s++;		
+               
+			   $submenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->rights->stock->mouvement->creer);
+ 	 				$submenu->liste[$s]['padre']='stock';$s++;	               
+			if ($conf->supplier_order->enabled) {$submenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
+			$submenu->liste[$s]['padre']='stock';$s++;}	  			
 			}
 
 			// Inventory
@@ -1168,14 +1417,20 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 					{
 						$submenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $m['idsel'], 'stock');
+ 	 				$submenu->liste[$s]['padre']='stock';$s++;	  						
 						$submenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
+	 	 				$submenu->liste[$s]['padre']='stock';$s++;	  					
 						$submenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+ 	 				$submenu->liste[$s]['padre']='stock';$s++;	  					
 					}
 					else
 					{
 						$submenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->inventory_advance->read, '', $m['idsel'], 'stock');
+ 	 				$submenu->liste[$s]['padre']='stock';$s++;	  							
 						$submenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
+	 	 				$submenu->liste[$s]['padre']='stock';$s++;	  						
 						$submenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+	 	 				$submenu->liste[$s]['padre']='stock';$s++;	  					
 					}
     			}
 			}
@@ -1185,14 +1440,22 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("sendings");
 				$submenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->rights->expedition->lire, '', $m['idsel'], 'sendings');
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;	  					
 				$submenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->rights->expedition->creer);
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;					
 				$submenu->add("/expedition/list.php?leftmenu=sendings", $langs->trans("List"), 1, $user->rights->expedition->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") $submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=0", $langs->trans("StatusSendingDraftShort"), 2, $user->rights->expedition->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") $submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=1", $langs->trans("StatusSendingValidatedShort"), 2, $user->rights->expedition->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") $submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") {$submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=0", $langs->trans("StatusSendingDraftShort"), 2, $user->rights->expedition->lire);
+				$submenu->liste[$s]['padre']='sendings';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") {$submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=1", $langs->trans("StatusSendingValidatedShort"), 2, $user->rights->expedition->lire);
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") {$submenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;}					
 				$submenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
+ 	 				$submenu->liste[$s]['padre']='sendings';$s++;				
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 		
 
@@ -1201,6 +1464,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'project')
 		{
+	$s = 0;
 			if (! empty($conf->projet->enabled))
 			{
 				$langs->load("projects");
@@ -1226,43 +1490,56 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 
 				// Project assigned to user
 				$submenu->add("/projet/index.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:''), $titleboth, 0, $user->rights->projet->lire, '', $m['idsel'], 'projects');
+	 				$submenu->liste[$s]['padre']='projects';$s++;				
 				$submenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user?'&search_project_user='.$search_project_user:''), $titlenew, 1, $user->rights->projet->creer);
-
+	 				$submenu->liste[$s]['padre']='projects';$s++;	
 				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
 				{
 					$submenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:'').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+	 				$submenu->liste[$s]['padre']='projects';$s++;					
 				}
 				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
 				{
 					$submenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+	 				$submenu->liste[$s]['padre']='projects';$s++;						
 					$submenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
+	 				$submenu->liste[$s]['padre']='list';$s++;					
 					$submenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
+	 				$submenu->liste[$s]['padre']='list';$s++;					
 				}
 				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+					
 					$submenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99', $langs->trans("List"), 2, $showmode);
+	 				$submenu->liste[$s]['padre']='list';$s++;				
 				}
 
 				$submenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
-
+	 				$submenu->liste[$s]['padre']='projects';$s++;
 				// Categories
 				if (! empty($conf->categorie->enabled))
 				{
 					$langs->load("categories");
 					$submenu->add("/categories/index.php?leftmenu=cat&amp;type=6", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+	 				$submenu->liste[$s]['padre']='cat';$s++;				
 				}
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
 					// Project affected to user
 					$submenu->add("/projet/activity/index.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("Activities"), 0, $user->rights->projet->lire);
+	 				$submenu->liste[$s]['padre']='tasks';$s++;						
 					$submenu->add("/projet/tasks.php?leftmenu=tasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+	 				$submenu->liste[$s]['padre']='tasks';$s++;						
 					$submenu->add("/projet/tasks/list.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("List"), 1, $user->rights->projet->lire);
-				    $submenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
-
+	 				$submenu->liste[$s]['padre']='tasks';$s++;					    
+					$submenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
+	 				$submenu->liste[$s]['padre']='projects';$s++;	
 				    $submenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+	 				$submenu->liste[$s]['padre']='tasks';$s++;						
 				}
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 
 		/*
@@ -1270,14 +1547,18 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		*/
 		if ($m['idsel'] == 'hrm')
 		{
+	$s=0;
 			// HRM module
 			if (! empty($conf->hrm->enabled))
 			{
 				$langs->load("hrm");
 
 				$submenu->add("/user/list.php?leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->rights->hrm->employee->read, '', $m['idsel'], 'hrm');
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
 				$submenu->add("/user/card.php?action=create&employee=1", $langs->trans("NewEmployee"), 1,$user->rights->hrm->employee->write);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;						
 				$submenu->add("/user/list.php?leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1,$user->rights->hrm->employee->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
 			}
 
 			// Leave/Holiday/Vacation module
@@ -1287,16 +1568,27 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
                 $langs->loadLangs(array("holiday","trips"));
 
 				$submenu->add("/holiday/list.php?leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $m['idsel'], 'hrm');
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
 				$submenu->add("/holiday/card.php?action=request", $langs->trans("New"), 1,$user->rights->holiday->write);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;					
 				$submenu->add("/holiday/list.php?leftmenu=hrm", $langs->trans("List"), 1,$user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") $submenu->add("/holiday/list.php?search_statut=1&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") $submenu->add("/holiday/list.php?search_statut=2&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") $submenu->add("/holiday/list.php?search_statut=3&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") $submenu->add("/holiday/list.php?search_statut=4&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") $submenu->add("/holiday/list.php?search_statut=5&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {$submenu->add("/holiday/list.php?search_statut=1&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);
+				$submenu->liste[$s]['padre']='hrm';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {$submenu->add("/holiday/list.php?search_statut=2&leftmenu=hrm", $langs->trans("ToReviewCP"), 2, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {$submenu->add("/holiday/list.php?search_statut=3&leftmenu=hrm", $langs->trans("ApprovedCP"), 2, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {$submenu->add("/holiday/list.php?search_statut=4&leftmenu=hrm", $langs->trans("CancelCP"), 2, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;}				
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="hrm") {$submenu->add("/holiday/list.php?search_statut=5&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;}				
 				$submenu->add("/holiday/define_holiday.php?action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->read);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
 				$submenu->add("/holiday/month_report.php", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->read_all);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;					
 				$submenu->add("/holiday/view_log.php?action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->define_holiday);
+	 				$submenu->liste[$s]['padre']='hrm';$s++;				
 			}
 
 			// Trips and expenses (old module)
@@ -1304,9 +1596,13 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("trips");
 				$submenu->add("/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire, '', $m['idsel'], 'tripsandexpenses');
+	 				$submenu->liste[$s]['padre']='tripsandexpenses';$s++;				
 				$submenu->add("/compta/deplacement/card.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->deplacement->creer);
+	 				$submenu->liste[$s]['padre']='tripsandexpenses';$s++;					
 				$submenu->add("/compta/deplacement/list.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->deplacement->lire);
+	 				$submenu->liste[$s]['padre']='tripsandexpenses';$s++;					
 				$submenu->add("/compta/deplacement/stats/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->deplacement->lire);
+	 				$submenu->liste[$s]['padre']='tripsandexpenses';$s++;				
 			}
 
 			// Expense report
@@ -1314,15 +1610,25 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 			{
 				$langs->load("trips");
 				$submenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->expensereport->lire, '', $m['idsel'], 'expensereport');
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;				
 				$submenu->add("/expensereport/card.php?action=create&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->expensereport->creer);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;					
 				$submenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=0&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Draft"), 2, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=2&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Validated"), 2, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=5&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Approved"), 2, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=6&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Paid"), 2, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=4&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Canceled"), 2, $user->rights->expensereport->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") $submenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=0&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Draft"), 2, $user->rights->expensereport->lire);
+				$submenu->liste[$s]['padre']='expensereport';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=2&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Validated"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=5&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Approved"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=6&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Paid"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=4&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Canceled"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;}					
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="expensereport") {$submenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;}					
 				$submenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->expensereport->lire);
+	 				$submenu->liste[$s]['padre']='expensereport';$s++;				
 			}
 
 			if (! empty($conf->projet->enabled))
@@ -1334,9 +1640,11 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 					$search_project_user = GETPOST('search_project_user','int');
 
 					$submenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+	 				$submenu->liste[$s]['padre']='tasks';$s++;				
 				}
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 		
 
@@ -1345,35 +1653,46 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'tools')
 		{
+	$s = 0;
 			if (empty($user->socid)) // limit to internal users
 			{
 				$langs->load("mails");
 				$submenu->add("/admin/mails_templates.php?leftmenu=email_templates", $langs->trans("EMailTemplates"), 0, 1, '', $m['idsel'], 'email_templates');
+	 				$submenu->liste[$s]['padre']='email_templates';$s++;			
 			}
 
 			if (! empty($conf->mailing->enabled))
 			{
 				$submenu->add("/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire, '', $m['idsel'], 'mailing');
+	 				$submenu->liste[$s]['padre']='mailing';$s++;				
 				$submenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $langs->trans("NewMailing"), 1, $user->rights->mailing->creer);
+	 				$submenu->liste[$s]['padre']='mailing';$s++;					
 				$submenu->add("/comm/mailing/list.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
+	 				$submenu->liste[$s]['padre']='mailing';$s++;				
 			}
 
 			if (! empty($conf->export->enabled))
 			{
 				$langs->load("exports");
 				$submenu->add("/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0, $user->rights->export->lire, '', $m['idsel'], 'export');
+		 				$submenu->liste[$s]['padre']='export';$s++;			
 				$submenu->add("/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
+		 				$submenu->liste[$s]['padre']='export';$s++;						
 				//$submenu->add("/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->rights->export->lire);
 			}
 
 			if (! empty($conf->import->enabled))
 			{
 				$langs->load("exports");
+				
 				$submenu->add("/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->run, '', $m['idsel'], 'import');
+	 				$submenu->liste[$s]['padre']='import';$s++;				
 				$submenu->add("/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->run);
+	 				$submenu->liste[$s]['padre']='import';$s++;				
 			}
 			
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 
 		/*
@@ -1381,44 +1700,63 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 		 */
 		if ($m['idsel'] == 'members')
 		{
+	$s = 0;
 			if (! empty($conf->adherent->enabled))
 			{
 				// Load translation files required by the page
                 $langs->loadLangs(array("members","compta"));
 
 				$submenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire, '', $m['idsel'], 'members');
+	 				$submenu->liste[$s]['padre']='members';$s++;				
 				$submenu->add("/adherents/card.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),2,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),2,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),2,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),2,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),2,$user->rights->adherent->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 				$submenu->add("/adherents/stats/index.php?leftmenu=members",$langs->trans("MenuMembersStats"),1,$user->rights->adherent->lire);
-
+	 				$submenu->liste[$s]['padre']='members';$s++;	
 				$submenu->add("/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
-				if (! empty($conf->global->MEMBER_LINK_TO_HTPASSWDFILE) && ($usemenuhider || empty($leftmenu) || $leftmenu=='none' || $leftmenu=="members" || $leftmenu=="export")) $submenu->add("/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
-
+	 				$submenu->liste[$s]['padre']='export';$s++;					
+				if (! empty($conf->global->MEMBER_LINK_TO_HTPASSWDFILE) && ($usemenuhider || empty($leftmenu) || $leftmenu=='none' || $leftmenu=="members" || $leftmenu=="export")) {$submenu->add("/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
+				$submenu->liste[$s]['padre']='export';$s++;	
+				}
 				if (! empty($conf->categorie->enabled))
 				{
 					$langs->load("categories");
 					$submenu->add("/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $m['idsel'], 'cat');
+	 				$submenu->liste[$s]['padre']='cat';$s++;				
 				}
 
 				$submenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;				
 				$submenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
+	 				$submenu->liste[$s]['padre']='members';$s++;				
 				$submenu->add("/adherents/subscription/list.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
+	 				$submenu->liste[$s]['padre']='members';$s++;				
 				$submenu->add("/adherents/stats/index.php?leftmenu=members",$langs->trans("MenuMembersStats"),1,$user->rights->adherent->lire);
-
+	 				$submenu->liste[$s]['padre']='members';$s++;
 				//$submenu->add("/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Tools"),0,$user->rights->adherent->export, '', $m['idsel'], 'export');
 				//if (! empty($conf->export->enabled) && ($usemenuhider || empty($leftmenu) || $leftmenu=="export")) $submenu->add("/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
 
 				// Type
 				$submenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("MembersTypes"),0,$user->rights->adherent->configurer, '', $m['idsel'], 'setup');
+	 				$submenu->liste[$s]['padre']='setup';$s++;				
 				$submenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members&amp;action=create",$langs->trans("New"),1,$user->rights->adherent->configurer);
+	 				$submenu->liste[$s]['padre']='setup';$s++;					
 				$submenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("List"),1,$user->rights->adherent->configurer);
+	 				$submenu->liste[$s]['padre']='setup';$s++;				
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;		
 		}
 
 		// Add personalized menus and modules menus
@@ -1442,7 +1780,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 				$i = 0;
 
 				if ($numr > 0) 	$submenu->add('/compta/bank/list.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
-
+	 				$submenu->liste[$s]['padre']='members';$s++;
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
@@ -1450,6 +1788,7 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 					if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
 					{
 						$submenu->add('/compta/bank/bankentries_list.php?action=reconcile&contextpage=banktransactionlist-'.$objp->rowid.'&account='.$objp->rowid.'&id='.$objp->rowid.'&search_conciliated=0',$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+	 				$submenu->liste[$s]['padre']='members';$s++;					
 					}
 					$i++;
 				}
@@ -1471,15 +1810,185 @@ array_push($menu->liste[$k],['subenu'=>$submenu->liste]);
 					$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
 					$submenu->add($link, dol_trunc($conf->global->$paramkey,24));
+	 				$submenu->liste[$s]['padre']='members';$s++;						
 				}
 				$i++;
 			}
-array_push($menu->liste[$k],['subenu'=>$submenu->liste]);			
+		$menu->liste[$k]['submenu']= '';
+        $menu->liste[$k]['submenu'] = $submenu->liste;	
 		}		  
 
 
 
 	}
+
+function sub_1($sub_m,$nivel,$padre){
+foreach($sub_m as $m2){
+if($m2['level'] == 0){
+$sub_menu[$m2['padre']] =
+array('url'=>$m2['titre'],
+'titre'=>$m2['titre'],
+'level'=>$m2['level'],
+'enabled'=>$m2['enabled'],
+'target'=>$m2['target'],
+'mainmenu'=>$m2['mainmenu'],
+'leftmenu'=>$m2['leftmenu'],
+'position'=>$m2['position'],
+'id'=>$m2['id'],
+'idsel'=>$m2['idsel'],
+'classname'=>$m2['classname'],
+'prefix'=>$m2['prefix'],
+'padre'=>$m2['padre'],
+'sum_menu'=>''
+);	
+}
+
+if($m2['level'] == 1){
+foreach($sub_menu as $k1=>$s1){
 	
+if($k1 == $s1['padre']){	
+$sub_menu1[$s1['padre']] =
+array('url'=>$s1['titre'],
+'titre'=>$s1['titre'],
+'level'=>$s1['level'],
+'enabled'=>$s1['enabled'],
+'target'=>$s1['target'],
+'mainmenu'=>$s1['mainmenu'],
+'leftmenu'=>$s1['leftmenu'],
+'position'=>$s1['position'],
+'id'=>$s1['id'],
+'idsel'=>$s1['idsel'],
+'classname'=>$s1['classname'],
+'prefix'=>$s1['prefix'],
+'padre'=>$s1['padre'],
+'sum_menu'=>''
+);
+}
+
+
+}
+
+$sub_menu[$k1]['sum_menu']=$sub_menu1;
+
+}
+
+
+
+}
+
+
+
+
+//var_dump($sub_menu);
+return $sub_menu;
+}
+
+
+//obteniendo hijos del submenu
+function hijos1($nivel,$padre){
+global $menu;
+foreach($menu->liste as $e){
+foreach($e['submenu'] as $e2){
+if($e2['level']==$nivel){
+if($padre==$e2['padre']){$hijos[]= array(
+'url'=>$e2['url'],
+'titre'=>$e2['titre'],
+'level'=>$e2['level'],
+'enabled'=>$e2['enabled'],
+'target'=>$e2['target'],
+'mainmenu'=>$e2['mainmenu'],
+'leftmenu'=>$e2['leftmenu'],
+'position'=>$e2['position'],
+'id'=>$e2['id'],
+'idsel'=>$e2['idsel'],
+'classname'=>$e2['classname'],
+'prefix'=>$e2['prefix'],
+'padre'=>$e2['padre']
+);
+	}
+}
+}	
+}
+
+return $hijos;
+
+}
+//insertando hijos en el menu principal
+foreach($menu->liste as $k=>$m){
+foreach($m['submenu'] as $k2=>$m2){
+//nivel 0
+if($m2['level']==0){
+$num = count( hijos1(1,$m2['padre']));
+if($num > 0){
+ $menu->liste[$k]['submenu'][$k2]['sub_menu'] = hijos1(1,$m2['padre']);	
+}
+
+		}
+//nivel 0
+
+//nivel 1
+if($m2['level']==1){
+$num = count( hijos1(2,$m2['padre']));
+if($num > 0){
+ $menu->liste[$k]['submenu'][$k2]['sub_menu'] = hijos1(2,$m2['padre']);	
+}
+}		
+//nivel 1
+
+//nivel 2
+if($m2['level']==2){
+$num = count( hijos1(3,$m2['padre']));
+if($num > 0){
+ $menu->liste[$k]['submenu'][$k2]['sub_menu'] = hijos1(3,$m2['padre']);	
+}
+}		
+//nivel 2
+
+
+//nivel 3
+if($m2['level']==3){
+$num = count( hijos1(4,$m2['padre']));
+if($num > 0){
+ $menu->liste[$k]['submenu'][$k2]['sub_menu'] = hijos1(4,$m2['padre']);	
+}
+}		
+//nivel 3
+
+}
+
+}
+
+
+echo '<ul>';
+foreach($menu->liste as $m){
+echo '<li>';
+echo $m['titre'];
+echo '<ul>';
+foreach($m['submenu'] as $m2){
+echo '<li>';
+echo $m2['titre'];
+if(isset($m2['sub_menu'])){	
+echo '<ul>';	
+foreach($m2['sub_menu'] as $m3){
+echo '<li>';
+echo $m3['titre'];
+echo '</li>';
+}
+echo '</ul>';
+}
+echo '</li>';
+}
+echo '</ul>';
+echo '</li>';	
+}
+
+echo '</ul>';
+//var_dump($menu->liste[0]);exit;
+exit;
+
+
+
+
+
 
 
