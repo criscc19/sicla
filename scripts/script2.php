@@ -147,13 +147,25 @@ INSERT INTO `erp_cajas2018`.`llx_product_fournisseur_price`(`rowid`, `entity`)
 SELECT `rowid`, `entity` FROM `erp_cuniverso17`.`llx_product_fournisseur_price`
 
 
+/**
+ * comnsulta para hacer un insert update de una tabla a otra
+ */
+INSERT INTO llx_societe_extrafields (provincia,canton,distrito,barrio) 
+SELECT provincia,canton,distrito,barrio FROM llx_societe ON DUPLICATE KEY UPDATE
+llx_societe_extrafields.provincia = llx_societe.provincia,
+llx_societe_extrafields.canton = llx_societe.canton,
+llx_societe_extrafields.distrito = llx_societe.distrito,
+llx_societe_extrafields.barrio = llx_societe.barrio
+/**
+ * comnsulta para hacer un insert update de una tabla a otra
+ */
+
+
 
 
 INSERT INTO ps_image_shop (id_product, id_image,id_shop,cover) 
 SELECT ps.id_product,pi.id_img_padre,'1','1' FROM llx__prestashop_img pi
 JOIN ps_product ps ON pi.padre like ps.reference
-
-
 
 consulta para un isert de una tabla a otra
 INSERT INTO llx_facture_extrafields (fk_object,vendedor) 
@@ -161,6 +173,21 @@ SELECT rowid,fk_user_author  FROM llx_facture
 
 actualizar de una tabla a otra
 UPDATE `llx_product_stock` SET `reel` = '0' WHERE `llx_product_stock`.`fk_entrepot` =9
+
+/**
+actualizar desde un join
+
+*/
+UPDATE llx_product_stock ps
+JOIN llx_product p ON ps.fk_product=p.rowid AND ps.fk_entrepot=1
+LEFT JOIN llx_nginventory_line nl ON nl.fk_product=p.rowid
+SET ps.reel = 0
+WHERE nl.qty IS NULL
+/**
+fin actualizar desde un join
+
+*/
+
 
 5061	Persona Jurídica
 5062	Persona Física		

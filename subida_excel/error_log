@@ -1,0 +1,36 @@
+[15-May-2019 08:04:15 America/Costa_Rica] PHP Warning:  require(../../main.inc.php): failed to open stream: No such file or directory in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 5
+[15-May-2019 08:04:15 America/Costa_Rica] PHP Fatal error:  require(): Failed opening required '../../main.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 5
+[15-May-2019 08:05:02 America/Costa_Rica] PHP Warning:  require(../Classes/PHPExcel/IOFactory.php): failed to open stream: No such file or directory in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 17
+[15-May-2019 08:05:02 America/Costa_Rica] PHP Fatal error:  require(): Failed opening required '../Classes/PHPExcel/IOFactory.php' (include_path='/home/erp/public_html/htdocs:/home/erp/public_html/kcbikinis/productmixer/core/da') in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 17
+[15-May-2019 08:05:50 America/Costa_Rica] PHP Warning:  require(../Classes/PHPExcel/IOFactory.php): failed to open stream: No such file or directory in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 17
+[15-May-2019 08:05:50 America/Costa_Rica] PHP Fatal error:  require(): Failed opening required '../Classes/PHPExcel/IOFactory.php' (include_path='/home/erp/public_html/htdocs') in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 17
+[15-May-2019 08:16:02 America/Costa_Rica] PHP Catchable fatal error:  Object of class Product could not be converted to string in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock.php on line 35
+[01-Jun-2019 10:09:53 America/Costa_Rica] PHP Parse error:  syntax error, unexpected '/' in /home/erp/public_html/kcbikinis/subida_excel/actualizar_stock2.php on line 35
+[01-Jul-2019 19:22:38 UTC] PHP Warning:  require_once(/home/agroambienteerp/public_html/prodiete/class/prodiete.class.php): failed to open stream: No such file or directory in /home/agroambienteerp/public_html/subida_excel/productos.php on line 15
+[01-Jul-2019 19:22:38 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/agroambienteerp/public_html/prodiete/class/prodiete.class.php' (include_path='/home/agroambienteerp/public_html/htdocs') in /home/agroambienteerp/public_html/subida_excel/productos.php on line 15
+[01-Jul-2019 19:23:49 UTC] PHP Warning:  require_once(/home/agroambienteerp/public_html/prodiete/class/prodiete.class.php): failed to open stream: No such file or directory in /home/agroambienteerp/public_html/subida_excel/productos.php on line 17
+[01-Jul-2019 19:23:49 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/agroambienteerp/public_html/prodiete/class/prodiete.class.php' (include_path='/home/agroambienteerp/public_html/htdocs') in /home/agroambienteerp/public_html/subida_excel/productos.php on line 17
+[01-Jul-2019 19:24:19 UTC] PHP Fatal error:  Uncaught PHPExcel_Reader_Exception: Could not open productos.xlsx for reading! File does not exist. in /home/agroambienteerp/public_html/subida_excel/Classes/PHPExcel/Reader/Excel2007.php:73
+Stack trace:
+#0 /home/agroambienteerp/public_html/subida_excel/Classes/PHPExcel/IOFactory.php(269): PHPExcel_Reader_Excel2007->canRead('productos.xlsx')
+#1 /home/agroambienteerp/public_html/subida_excel/Classes/PHPExcel/IOFactory.php(191): PHPExcel_IOFactory::createReaderForFile('productos.xlsx')
+#2 /home/agroambienteerp/public_html/subida_excel/productos.php(23): PHPExcel_IOFactory::load('productos.xlsx')
+#3 {main}
+  thrown in /home/agroambienteerp/public_html/subida_excel/Classes/PHPExcel/Reader/Excel2007.php on line 73
+[01-Jul-2019 19:28:07 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ',' or ')' in /home/agroambienteerp/public_html/subida_excel/productos.php on line 56
+[30-Sep-2019 15:51:26 America/Costa_Rica] PHP Parse error:  syntax error, unexpected ',' in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:17:11 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:17:11 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:17:11 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:17:11 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:17:11 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:18:52 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:18:52 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:18:52 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:18:52 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:18:52 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:20:51 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:20:51 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:20:51 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:20:51 America/Costa_Rica] PHP Warning:  var_dump(): Couldn't fetch mysqli_result in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
+[30-Sep-2019 16:20:51 America/Costa_Rica] PHP Warning:  var_dump(): Property access is not allowed yet in /home/mangueraserp/public_html/subida_excel/clientes.php on line 72
