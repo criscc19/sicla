@@ -361,3 +361,90 @@ INSERT INTO `llx_c_forme_juridique` (`rowid`, `code`, `fk_pays`, `libelle`, `isv
 
 
 ?display=full&filter[id_product_attribute]=[0]&filter[id_product]=[58]
+
+
+public function init($options='')
+	{
+	global $db, $conf;
+		$result=$this->_load_tables('/depositos/sql/');
+		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
+
+		// Create extrafields
+		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		//campo extra familias 
+            $attrname = "familia";
+            $label="Familia"; 
+            $type="sellist"; 
+            $pos=1; 
+            $size=''; 
+            $elementtype="societe";
+            $unique=0; 
+            $required=0; 
+            $default_value=''; 
+            $param=array('options'=>array('familias:apellidos:rowid::rowid'=>NULL)); 
+            $alwayseditable=1; 
+            $perms=''; 
+            $list=3; 
+            $ishidden=0; 
+            $computed=''; 
+            $entity=$conf->entity; 
+            $langfile=''; 
+            $enabled='1';   
+            $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $ishidden, $computed, $entity, $langfile, $enabled);
+		//fin campo extra familias
+		
+		//campo extra grupos 
+            $attrname = "grupo";
+            $label="Grupo"; 
+            $type="sellist"; 
+            $pos=1; 
+            $size=''; 
+            $elementtype="societe";
+            $unique=0; 
+            $required=0; 
+            $default_value=''; 
+            $param=array('options'=>array('grupos:nombre:rowid::rowid'=>NULL)); 
+            $alwayseditable=1; 
+            $perms=''; 
+            $list=3; 
+            $ishidden=0; 
+            $computed=''; 
+            $entity=$conf->entity; 
+            $langfile=''; 
+            $enabled='1';   
+            $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $ishidden, $computed, $entity, $langfile, $enabled);
+		//fin campo extra grupos	
+		
+		//campo extra actividad 
+            $attrname = "actividad";
+            $label="Actividad"; 
+            $type="sellist"; 
+            $pos=1; 
+            $size=''; 
+            $elementtype="societe";
+            $unique=0; 
+            $required=0; 
+            $default_value=''; 
+            $param=array('options'=>array('actividades:nombre:rowid::rowid'=>NULL)); 
+            $alwayseditable=1; 
+            $perms=''; 
+            $list=3; 
+            $ishidden=0; 
+            $computed=''; 
+            $entity=$conf->entity; 
+            $langfile=''; 
+            $enabled='1';   
+            $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $ishidden, $computed, $entity, $langfile, $enabled);
+		//fin campo extra actividad		
+		
+		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'depositos@depositos', '$conf->depositos->enabled');
+		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'depositos@depositos', '$conf->depositos->enabled');
+		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'depositos@depositos', '$conf->depositos->enabled');
+		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1 '', 0, 0, '', '', 'depositos@depositos', '$conf->depositos->enabled');
+		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'depositos@depositos', '$conf->depositos->enabled');
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
+	}
