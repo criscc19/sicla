@@ -324,7 +324,7 @@ ADD  `distrito` int(2) NOT NULL,
 ADD  `barrio` int(2) NOT NULL
 
 
-
+//ACTUALIZAR FECHA DE CANCELACION DE FACTURAS
 UPDATE llx_facture_extrafields e
 JOIN llx_facture f ON e.fk_object=f.rowid
 LEFT JOIN (SELECT pf.fk_facture, MAX(datep) datep FROM llx_paiement_facture pf JOIN llx_paiement p ON pf.fk_paiement=p.rowid  GROUP BY pf.fk_facture) fe ON fe.fk_facture=f.rowid
