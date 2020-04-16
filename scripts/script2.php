@@ -324,7 +324,7 @@ ADD  `distrito` int(2) NOT NULL,
 ADD  `barrio` int(2) NOT NULL
 
 
-//ACTUALIZAR FECHA DE CANCELACION DE FACTURAS
+
 UPDATE llx_facture_extrafields e
 JOIN llx_facture f ON e.fk_object=f.rowid
 LEFT JOIN (SELECT pf.fk_facture, MAX(datep) datep FROM llx_paiement_facture pf JOIN llx_paiement p ON pf.fk_paiement=p.rowid  GROUP BY pf.fk_facture) fe ON fe.fk_facture=f.rowid
@@ -332,7 +332,18 @@ LEFT JOIN (SELECT rs.fk_facture,MAX(rs.datec) datec FROM llx_societe_remise_exce
 SET e.cancelacion = IF(fe.datep IS NOT NULL AND fe.datep > fen.datec OR fen.datec IS
 NULL, fe.datep, fen.datec)
 WHERE fk_statut > 0 AND paye=1
-
+	       
+//ACTUALIZAR FECHA DE CANCELACION DE FACTURAS
+SELECT pr.rowid pr_id,pr.ref,pr.datep,pr.fin_validite,pr.date_cloture,c_p.code,c_p.label,pr.note_private,pr.note_private,pr.total_ht,pr.total,pr.tva,pr.remise_percent,u.rowid u_id,u.login,u.firstname,u.lastname,s.rowid s_id,s.nom,s.name_alias,pr.multicurrency_code,pr.multicurrency_total_ht,pr.multicurrency_total_ttc,pr.multicurrency_tx,pr.multicurrency_total_tva,
+(SELECT COUNT(ee.fk_source) FROM llx_element_element ee WHERE ee.sourcetype="propal" AND ee.targettype="facture" AND ee.fk_source=pr.rowid) facturas
+FROM llx_propal pr
+JOIN llx_c_propalst c_p ON pr.fk_statut=c_p.id
+JOIN llx_user u ON u.rowid = pr.fk_user_author
+JOIN llx_societe s ON s.rowid=pr.fk_soc  
+WHERE pr.fk_statut > 0
+//debe existir una llave unica	       
+	       
+	       
 
 //agrear campos dolares
 ALTER TABLE `llx_payment_expensereport`
