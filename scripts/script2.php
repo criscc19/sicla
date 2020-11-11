@@ -459,3 +459,5 @@ public function init($options='')
 
 		return $this->_init($sql, $options);
 	}
+	       
+UPDATE ps_product SET reference = REPLACE(reference, '_', '')
